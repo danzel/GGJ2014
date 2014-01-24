@@ -35,8 +35,12 @@ function loadingComplete() {
 	player = new Player();
 	cats.push(new Cat(1, 1));
 	cats.push(new Cat(1, 2));
+	cats.push(new Cat(1, 3));
 	cats.push(new Cat(2, 1));
 	cats.push(new Cat(2, 2));
+	cats.push(new Cat(2, 3));
+	cats.push(new Cat(3, 1));
+
 	catHerd = new CatHerd(cats, player);
 
 	createjs.Ticker.setFPS(60);

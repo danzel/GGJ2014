@@ -1,4 +1,4 @@
-Cat = function () {
+Cat = function (x, y) {
 
 	this.radius = 1;
 	this.isBig = false;
@@ -29,7 +29,7 @@ Cat = function () {
 	//Physics body
 	this.body = world.CreateBody(bodyDef);
 	this.fixture = this.body.CreateFixture(fixDef);
-	this.body.SetPosition(new B2Vec2(50, 50));
+	this.body.SetPosition(new B2Vec2(x, y));
 
 
 	//Our shape

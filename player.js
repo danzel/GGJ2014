@@ -3,6 +3,8 @@ Player = function () {
 	//const
 	this.smallRadius = 2;
 	this.bigRadius = 6;
+	this.smallDensity = 0.5;
+	this.bigDensity = 0.1;
 
 	this.forceScale = 10000;
 
@@ -13,7 +15,7 @@ Player = function () {
 	var fixDef = new B2FixtureDef();
 	var bodyDef = new B2BodyDef();
 
-	fixDef.density = 0.5;
+	fixDef.density = this.smallDensity;
 	fixDef.friction = 0.0;
 	fixDef.restitution = 0.0;
 	fixDef.shape = new B2CircleShape(this.radius);
@@ -26,7 +28,7 @@ Player = function () {
 	this.body = world.CreateBody(bodyDef);
 	this.fixture = this.body.CreateFixture(fixDef);
 	this.body.SetPosition(new B2Vec2(50, 50));
-
+	this.body.mass = 1;
 
 	//Our shape
 	this.shape = new createjs.Shape();
@@ -42,13 +44,16 @@ Player = function () {
 	var self = this;
 	gamepad.bind(Gamepad.Event.BUTTON_DOWN, function (e) {
 		if (e.gamepad.index === 0 && e.control == 'RIGHT_TOP_SHOULDER') {
-			createjs.Tween.get({ scale: self.body.m_fixtureList.m_shape.GetRadius() })
-				.to({ scale: self.isBig ? self.smallRadius : self.bigRadius }, 250, createjs.Ease.circIn)
+			createjs.Tween.get({ radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
+				.to(self.isBig ? { radius: self.smallRadius, density: self.smallDensity } : { radius: self.bigRadius, density: self.bigDensity }, 250, createjs.Ease.circIn)
 				.addEventListener('change', function (ev) {
-					var scale = ev.target.target.scale;
-					self.body.m_fixtureList.m_shape.SetRadius(scale);
-					self.shape.scaleX = self.shape.scaleY = scale;
-					console.log(ev.target.target.scale);
+					var radius = ev.target.target.radius;
+					var density = ev.target.target.density;
+					self.body.m_fixtureList.m_shape.SetRadius(radius);
+					self.body.m_fixtureList.SetDensity(density);
+					self.body.ResetMassData();
+					self.shape.scaleX = self.shape.scaleY = radius;
+					console.log(radius + ', ' + density);
 				});
 			self.isBig = !self.isBig;
 			console.log(e.control);
@@ -73,6 +78,8 @@ Player.prototype = {
 	renderUpdate: function () {
 		this.shape.x = this.body.GetPosition().x * SIM_SCALE;
 		this.shape.y = this.body.GetPosition().y * SIM_SCALE;
+
+		this.shape.rotation = this.body.GetLinearVelocity().Angle();
 
 		this.targetShape.x = this.targetPosition.x * SIM_SCALE;
 		this.targetShape.y = this.targetPosition.y * SIM_SCALE;
