@@ -51,10 +51,14 @@ Cat = function (x, y) {
 	Events.subscribe('player-toggle-bigness', function (becomeBig) {
 		becomeBig = !becomeBig;
 		self.isBig = becomeBig;
+		self.transforming = true;
+		self.aiState = {};
 
 		createjs.Tween.get({ radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
 			.to(becomeBig ? { radius: self.bigRadius, density: self.bigDensity } : { radius: self.smallRadius, density: self.smallDensity }, 250, createjs.Ease.circIn)
-			.addEventListener('change', function (ev) {
+			.call(function () {
+				self.transforming = false;
+			}).addEventListener('change', function (ev) {
 				var radius = ev.target.target.radius;
 				var density = ev.target.target.density;
 				self.body.m_fixtureList.m_shape.SetRadius(radius);
