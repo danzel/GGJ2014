@@ -1,5 +1,8 @@
 var stage, renderer;
-var stageLayers = [];
+
+var LayerBackground;
+var LayerStage;
+var LayerForeground;
 
 var world = new B2World(B2Vec2.Zero, true);
 var gamepad, gamepadStrategy, gamepads = [];
@@ -30,11 +33,13 @@ function init() {
 	stage = new createjs.Stage('canvas');
 	createjs.DisplayObject.suppressCrossDomainErrors = true;
 
-	for (var i = 0; i < 4; i++) {
-		var container = new createjs.Container();
-		stage.addChild(container);
-		stageLayers.push(container);
-	}
+	//Layers
+	LayerBackground = new createjs.Container();
+	stage.addChild(LayerBackground);
+	LayerStage = new createjs.Container();
+	stage.addChild(LayerStage);
+	LayerForeground = new createjs.Container();
+	stage.addChild(LayerForeground);
 
 	Resources = new createjs.LoadQueue(false);
 	Resources.installPlugin(createjs.Sound);
@@ -104,4 +109,15 @@ function rendererTick() {
 	for (i = enemies.length - 1; i >= 0; i--) {
 		enemies[i].renderUpdate();
 	}
+
+	//Sort the stage elements by y position
+	LayerStage.sortChildren(function (obj1, obj2) {
+		if (obj1.y > obj2.y) {
+			return 1;
+		}
+		if (obj1.y < obj2.y) {
+			return -1;
+		}
+		return 0;
+	});
 }

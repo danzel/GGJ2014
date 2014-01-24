@@ -37,7 +37,7 @@ Tree = function (treeDef, x, y) {
 	this.shape.scaleX = this.shape.scaleY = this.radius;
 	this.container.addChild(this.shape);
 
-	stage.addChild(this.container);
+	LayerStage.addChild(this.container);
 };
 Tree.prototype = {
 	position: function () {

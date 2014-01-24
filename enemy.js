@@ -29,7 +29,7 @@ Enemy = function (x, y) {
 	this.shape = new createjs.Shape();
 	this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, SIM_SCALE).moveTo(0, 0).lineTo(0, -SIM_SCALE);
 	this.shape.scaleX = this.shape.scaleY = this.radius;
-	stage.addChild(this.shape);
+	LayerStage.addChild(this.shape);
 };
 Enemy.prototype = {
 	position: function () {

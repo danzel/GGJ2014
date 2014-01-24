@@ -39,12 +39,12 @@ Player = function () {
 	this.shape = new createjs.Shape();
 	this.shape.graphics.beginStroke('#000').drawCircle(0, 0, SIM_SCALE).moveTo(0, 0).lineTo(0, - SIM_SCALE);
 	this.shape.scaleX = this.shape.scaleY = this.radius;
-	stage.addChild(this.shape);
+	LayerStage.addChild(this.shape);
 
 	//Target shape
 	this.targetShape = new createjs.Shape();
 	this.targetShape.graphics.beginStroke('#f00').drawCircle(0, 0, 1);
-	stage.addChild(this.targetShape);
+	LayerForeground.addChild(this.targetShape);
 
 	var self = this;
 	Events.subscribe('player-toggle-bigness', function (becomeBig) {
