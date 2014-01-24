@@ -6,7 +6,7 @@ Player = function () {
 	this.smallDensity = 0.5;
 	this.bigDensity = 0.1;
 
-	this.laserRange = 20;
+	this.laserRange = 40;
 
 	this.forceScale = 10000;
 

@@ -1,12 +1,20 @@
 var stage, renderer;
+var stageLayers = [];
+
 var world = new B2World(B2Vec2.Zero, true);
 var gamepad, gamepadStrategy, gamepads = [];
 var SIM_SCALE = 10;
 
+var player;
+var playerControls;
+
 var cats = [];
 var catHerd;
 
+var enemies = [];
+
 var Events = new EventBroker();
+var Resources;
 
 function init() {
 	gamepadStrategy = new Gamepad.UpdateStrategies.ManualUpdateStrategy();
@@ -22,15 +30,21 @@ function init() {
 	stage = new createjs.Stage('canvas');
 	createjs.DisplayObject.suppressCrossDomainErrors = true;
 
-	//todo load res
+	for (var i = 0; i < 4; i++) {
+		var container = new createjs.Container();
+		stage.addChild(container);
+		stageLayers.push(container);
+	}
 
-	loadingComplete();
+	Resources = new createjs.LoadQueue(false);
+	Resources.installPlugin(createjs.Sound);
+	Resources.on('complete', loadingComplete);
+
+	Resources.loadManifest([
+		{ id: 'rubble/tree_a_big', src: 'imgs/rubble/tree_a_big.png' }
+	]);
 }
 
-var player;
-var body, fixture;
-
-var playerShape, targetShape;
 
 function loadingComplete() {
 
@@ -46,6 +60,17 @@ function loadingComplete() {
 	cats.push(new Cat(3, 1));
 
 	catHerd = new CatHerd(cats, player);
+
+	var treeDef = {
+		img: Resources.getItem('rubble/tree_a_big'),
+		size: new B2Vec2(503, 539).Divide(1.2),
+		center: new B2Vec2(180, 450).Divide(1.2)
+	};
+
+	enemies.push(new Tree(treeDef, 90, 50));
+	//enemies.push(new Enemy(90, 20));
+	//enemies.push(new Enemy(100, 40));
+
 
 	createjs.Ticker.setFPS(60);
 	createjs.Ticker.addEventListener("tick", function () {
@@ -69,10 +94,14 @@ function gameTick(dt) {
 }
 
 function rendererTick() {
-
+	var i;
 	player.renderUpdate();
 
-	for (var i = cats.length - 1; i >= 0; i--) {
+	for (i = cats.length - 1; i >= 0; i--) {
 		cats[i].renderUpdate();
+	}
+
+	for (i = enemies.length - 1; i >= 0; i--) {
+		enemies[i].renderUpdate();
 	}
 }
