@@ -10,8 +10,8 @@ Player = function () {
 
 	this.forceScale = 10000;
 
-	this.isBig = false;
-	this.radius = this.smallRadius;
+	this.isBig = true;
+	this.radius = this.bigRadius;
 
 	this.movementDirection = B2Vec2.Zero;
 	this.laserOffset = B2Vec2.Zero;
@@ -20,7 +20,7 @@ Player = function () {
 	var fixDef = new B2FixtureDef();
 	var bodyDef = new B2BodyDef();
 
-	fixDef.density = this.smallDensity;
+	fixDef.density = this.bigDensity;
 	fixDef.friction = 0.0;
 	fixDef.restitution = 0.0;
 	fixDef.shape = new B2CircleShape(this.radius);
