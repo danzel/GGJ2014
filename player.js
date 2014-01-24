@@ -1,7 +1,13 @@
 Player = function () {
 
-	this.radius = 1;
+	//const
+	this.smallRadius = 2;
+	this.bigRadius = 6;
+
+	this.forceScale = 10000;
+
 	this.isBig = false;
+	this.radius = this.smallRadius;
 
 	//Create a physics body
 	var fixDef = new B2FixtureDef();
@@ -10,7 +16,7 @@ Player = function () {
 	fixDef.density = 0.5;
 	fixDef.friction = 0.0;
 	fixDef.restitution = 0.0;
-	fixDef.shape = new B2CircleShape(radius);
+	fixDef.shape = new B2CircleShape(this.radius);
 
 	bodyDef.type = B2Body.b2_dynamicBody;
 	bodyDef.linearDamping = 20;
@@ -18,13 +24,14 @@ Player = function () {
 
 	//Physics body
 	this.body = world.CreateBody(bodyDef);
-	this.fixture = body.CreateFixture(fixDef);
+	this.fixture = this.body.CreateFixture(fixDef);
 	this.body.SetPosition(new B2Vec2(50, 50));
 
 
 	//Our shape
 	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#000').drawCircle(0, 0, radius * SIM_SCALE).moveTo(0, 0).lineTo(0, -SIM_SCALE);
+	this.shape.graphics.beginStroke('#000').drawCircle(0, 0, SIM_SCALE).moveTo(0, 0).lineTo(0, - SIM_SCALE);
+	this.shape.scaleX = this.shape.scaleY = this.radius;
 	stage.addChild(this.shape);
 
 	//Target shape
@@ -37,8 +44,8 @@ Player = function () {
 	var self = this;
 	gamepad.bind(Gamepad.Event.BUTTON_DOWN, function (e) {
 		if (e.gamepad.index === 0 && e.control == 'RIGHT_TOP_SHOULDER') {
-			createjs.Tween.get({ scale: body.m_fixtureList.m_shape.GetRadius() })
-				.to({ scale: self.isBig ? 1 : 4 }, 250, createjs.Ease.circIn)
+			createjs.Tween.get({ scale: self.body.m_fixtureList.m_shape.GetRadius() })
+				.to({ scale: self.isBig ? self.smallRadius : self.bigRadius }, 250, createjs.Ease.circIn)
 				.addEventListener('change', function (ev) {
 					var scale = ev.target.target.scale;
 					self.body.m_fixtureList.m_shape.SetRadius(scale);
@@ -55,7 +62,7 @@ Player.prototype = {
 
 		if (gamepads.length > 0) {
 			var gpState = gamepads[0].state;
-			this.body.ApplyImpulse(new B2Vec2(gpState.LEFT_STICK_X, gpState.LEFT_STICK_Y).Multiply(3000 * dt), body.GetPosition());
+			this.body.ApplyImpulse(new B2Vec2(gpState.LEFT_STICK_X, gpState.LEFT_STICK_Y).Multiply(this.forceScale * dt), this.body.GetPosition());
 			//body.m_fixtureList.m_shape.SetRadius(2 + (1 - gpState.RIGHT_STICK_Y) * 4);
 
 			this.targetPosition = this.body.GetPosition().Copy()

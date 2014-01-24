@@ -3,6 +3,8 @@ var world = new B2World(B2Vec2.Zero, true);
 var gamepad, gamepadStrategy, gamepads = [];
 var SIM_SCALE = 10;
 
+var cats = [];
+
 function init() {
 	gamepadStrategy = new Gamepad.UpdateStrategies.ManualUpdateStrategy();
 	gamepad = new Gamepad(gamepadStrategy);
@@ -44,7 +46,7 @@ var CAT_RANGE = 200;
 
 function gameTick(dt) {
 
-	player.update();
+	player.update(dt);
 
 	world.Step(dt, 10, 10);
 	world.ClearForces();
