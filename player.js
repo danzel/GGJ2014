@@ -36,9 +36,7 @@ Player = function () {
 
 	//Target shape
 	this.targetShape = new createjs.Shape();
-	this.targetShape.graphics.beginStroke('#f00')
-		.moveTo(-10, -10).lineTo(10, 10)
-		.moveTo(10, -10).lineTo(-10, 10);
+	this.targetShape.graphics.beginStroke('#f00').drawCircle(0, 0, 1);
 	stage.addChild(this.targetShape);
 
 	var self = this;
@@ -66,7 +64,6 @@ Player.prototype = {
 			//body.m_fixtureList.m_shape.SetRadius(2 + (1 - gpState.RIGHT_STICK_Y) * 4);
 
 			this.targetPosition = this.body.GetPosition().Copy()
-				.Multiply(SIM_SCALE)
 				.Add2(gpState.RIGHT_STICK_X * CAT_RANGE, gpState.RIGHT_STICK_Y * CAT_RANGE);
 
 			//console.log(body.GetLinearVelocity());
@@ -77,8 +74,8 @@ Player.prototype = {
 		this.shape.x = this.body.GetPosition().x * SIM_SCALE;
 		this.shape.y = this.body.GetPosition().y * SIM_SCALE;
 
-		this.targetShape.x = this.targetPosition.x;
-		this.targetShape.y = this.targetPosition.y;
+		this.targetShape.x = this.targetPosition.x * SIM_SCALE;
+		this.targetShape.y = this.targetPosition.y * SIM_SCALE;
 
 	}
 };

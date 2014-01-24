@@ -4,6 +4,7 @@ var gamepad, gamepadStrategy, gamepads = [];
 var SIM_SCALE = 10;
 
 var cats = [];
+var catHerd;
 
 function init() {
 	gamepadStrategy = new Gamepad.UpdateStrategies.ManualUpdateStrategy();
@@ -32,6 +33,11 @@ var playerShape, targetShape;
 function loadingComplete() {
 
 	player = new Player();
+	cats.push(new Cat(1, 1));
+	cats.push(new Cat(1, 2));
+	cats.push(new Cat(2, 1));
+	cats.push(new Cat(2, 2));
+	catHerd = new CatHerd(cats, player);
 
 	createjs.Ticker.setFPS(60);
 	createjs.Ticker.addEventListener("tick", function () {
@@ -42,11 +48,12 @@ function loadingComplete() {
 	});
 }
 
-var CAT_RANGE = 200;
+var CAT_RANGE = 20;
 
 function gameTick(dt) {
 
 	player.update(dt);
+	catHerd.update(dt);
 
 	world.Step(dt, 10, 10);
 	world.ClearForces();
@@ -56,4 +63,8 @@ function gameTick(dt) {
 function rendererTick() {
 
 	player.renderUpdate();
+
+	for (var i = cats.length - 1; i >= 0; i--) {
+		cats[i].renderUpdate();
+	}
 }
