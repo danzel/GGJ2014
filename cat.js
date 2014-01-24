@@ -52,7 +52,7 @@ Cat = function (x, y) {
 		becomeBig = !becomeBig;
 		self.isBig = becomeBig;
 		self.transforming = true;
-		self.aiState = {};
+		self.aiState = null;
 
 		createjs.Tween.get({ radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
 			.to(becomeBig ? { radius: self.bigRadius, density: self.bigDensity } : { radius: self.smallRadius, density: self.smallDensity }, 250, createjs.Ease.circIn)

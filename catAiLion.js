@@ -1,24 +1,29 @@
 var CatAiLion = {
+
+	interestDistance: 60,
+	interestDistanceSquared: 60 * 60,
+
 	preUpdate: function (dt, cat, cats, player) {
 
 		this.cats = cats;
 		this.owner = player;
 
-		var interestDistance = 60;
-		var interestDistanceSquared = interestDistance * interestDistance;
+		if (!cat.aiState) {
+			//Is there anything close to us that we can see, try interact with it.
+			for (var i = enemies.length - 1; i >= 0; i--) {
+				var e = enemies[i];
 
-		//Is there anything close to us that we can see, try interact with it.
-		for (var i = enemies.length - 1; i >= 0; i--) {
-			var e = enemies[i];
+				var distSqrd = B2Math.DistanceSquared(e.position(), cat.position());
 
-			var distSqrd = B2Math.DistanceSquared(e.position(), cat.position());
+				if (distSqrd < this.interestDistanceSquared) {
+					//TODO: cast a ray?
 
-			if (distSqrd < interestDistanceSquared) {
-				//TODO: cast a ray?
-
-				this.interact(cat, e, distSqrd);
-				return;
+					this.interact(cat, e, dt);
+					return;
+				}
 			}
+		} else {
+			cat.aiState.handler.call(this, cat, dt);
 		}
 
 		return;
@@ -39,21 +44,38 @@ var CatAiLion = {
 		}
 	},
 
-	interact: function (cat, enemy, distSqrd) {
+	interact: function (cat, enemy, dt) {
 
 		if (enemy instanceof Tree) {
-			this.interactTree(cat, enemy, distSqrd);
+			cat.aiState = { handler: this.interactTree, tree: enemy, timeWaited: 0 };
 		} else if (enemy instanceof Enemy) {
 			//TODO
 		} else {
 			console.log('lions dunno what to do with:');
 			console.log(enemy);
 		}
+
+		if (cat.aiState) {
+			cat.aiState.handler.call(this, cat, dt);
+		}
 	},
 
-	interactTree: function (cat, tree, distSqrd) {
-		cat.forceToApply = this.steeringBehaviourSeek(cat, tree.position());
+	interactTree: function (cat, dt) {
+		var tree = cat.aiState.tree;
+		var dist = cat.position().DistanceTo(tree.position());
 
+		if (dist > this.interestDistance / 2) {
+			cat.forceToApply = this.steeringBehaviourSeek(cat, tree.position());
+		} else if (!cat.aiState.pounced) {
+			cat.aiState.timeWaited += dt;
+			if (cat.aiState.timeWaited >= 1) {
+				cat.forceToApply = tree.position().Copy().Subtract(cat.position()).Multiply(cat.maxForce * 100);
+
+				cat.aiState.pounced = true;
+			}
+		} else {
+			//have pounced... todo
+		}
 	},
 
 	steeringBehaviourSeek: function (agent, dest) {
