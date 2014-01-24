@@ -6,6 +6,8 @@ var SIM_SCALE = 10;
 var cats = [];
 var catHerd;
 
+var Events = new EventBroker();
+
 function init() {
 	gamepadStrategy = new Gamepad.UpdateStrategies.ManualUpdateStrategy();
 	gamepad = new Gamepad(gamepadStrategy);
@@ -32,6 +34,8 @@ var playerShape, targetShape;
 
 function loadingComplete() {
 
+	playerControls = new PlayerControls();
+
 	player = new Player();
 	cats.push(new Cat(1, 1));
 	cats.push(new Cat(1, 2));
@@ -52,9 +56,9 @@ function loadingComplete() {
 	});
 }
 
-var CAT_RANGE = 20;
-
 function gameTick(dt) {
+
+	playerControls.update();
 
 	player.update(dt);
 	catHerd.update(dt);

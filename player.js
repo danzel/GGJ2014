@@ -6,10 +6,15 @@ Player = function () {
 	this.smallDensity = 0.5;
 	this.bigDensity = 0.1;
 
+	this.laserRange = 20;
+
 	this.forceScale = 10000;
 
 	this.isBig = false;
 	this.radius = this.smallRadius;
+
+	this.movementDirection = B2Vec2.Zero;
+	this.laserOffset = B2Vec2.Zero;
 
 	//Create a physics body
 	var fixDef = new B2FixtureDef();
@@ -42,37 +47,38 @@ Player = function () {
 	stage.addChild(this.targetShape);
 
 	var self = this;
-	gamepad.bind(Gamepad.Event.BUTTON_DOWN, function (e) {
-		if (e.gamepad.index === 0 && e.control == 'RIGHT_TOP_SHOULDER') {
-			createjs.Tween.get({ radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
-				.to(self.isBig ? { radius: self.smallRadius, density: self.smallDensity } : { radius: self.bigRadius, density: self.bigDensity }, 250, createjs.Ease.circIn)
-				.addEventListener('change', function (ev) {
-					var radius = ev.target.target.radius;
-					var density = ev.target.target.density;
-					self.body.m_fixtureList.m_shape.SetRadius(radius);
-					self.body.m_fixtureList.SetDensity(density);
-					self.body.ResetMassData();
-					self.shape.scaleX = self.shape.scaleY = radius;
-					console.log(radius + ', ' + density);
-				});
-			self.isBig = !self.isBig;
-			console.log(e.control);
-		}
+	Events.subscribe('player-toggle-bigness', function (becomeBig) {
+		createjs.Tween.get({ radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
+			.to(becomeBig ? { radius: self.bigRadius, density: self.bigDensity } : { radius: self.smallRadius, density: self.smallDensity }, 250, createjs.Ease.circIn)
+			.addEventListener('change', function (ev) {
+				var radius = ev.target.target.radius;
+				var density = ev.target.target.density;
+				self.body.m_fixtureList.m_shape.SetRadius(radius);
+				self.body.m_fixtureList.SetDensity(density);
+				self.body.ResetMassData();
+				self.shape.scaleX = self.shape.scaleY = radius;
+				console.log(radius + ', ' + density);
+			});
+		self.isBig = becomeBig;
+		console.log(becomeBig);
 	});
+
+	Events.subscribe('player-laser-target-move', function (offset) {
+		self.laserOffset = offset;
+	});
+
+	Events.subscribe('player-movement-direction', function (dir) {
+		self.movementDirection = dir;
+	});
+
 };
 Player.prototype = {
 	update: function (dt) {
 
-		if (gamepads.length > 0) {
-			var gpState = gamepads[0].state;
-			this.body.ApplyImpulse(new B2Vec2(gpState.LEFT_STICK_X, gpState.LEFT_STICK_Y).Multiply(this.forceScale * dt), this.body.GetPosition());
-			//body.m_fixtureList.m_shape.SetRadius(2 + (1 - gpState.RIGHT_STICK_Y) * 4);
+		this.body.ApplyImpulse(this.movementDirection.Copy().Multiply(this.forceScale * dt), this.body.GetPosition());
 
-			this.targetPosition = this.body.GetPosition().Copy()
-				.Add2(gpState.RIGHT_STICK_X * CAT_RANGE, gpState.RIGHT_STICK_Y * CAT_RANGE);
-
-			//console.log(body.GetLinearVelocity());
-		}
+		this.targetPosition = this.body.GetPosition().Copy()
+			.Add2(this.laserOffset.x, this.laserOffset.y);
 	},
 
 	renderUpdate: function () {
