@@ -32,10 +32,6 @@ CatHerd.prototype = {
 			//Apply the force
 			//console.log(i + ': ' + agent.forceToApply.x + ', ' + agent.forceToApply.y);
 			agent.body.ApplyImpulse(agent.forceToApply.Multiply(dt), agent.position());
-
-			//Calculate our new movement angle TODO: Should probably be done after running step
-			//Maybe do it off desired direction?
-			agent.rotation = agent.velocity().Angle();
 		}
 	},
 	

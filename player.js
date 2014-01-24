@@ -37,8 +37,9 @@ Player = function () {
 
 	//Our shape
 	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#000').drawCircle(0, 0, SIM_SCALE).moveTo(0, 0).lineTo(0, - SIM_SCALE);
-	this.shape.scaleX = this.shape.scaleY = this.radius;
+	this.shape.graphics.beginStroke('#000').drawCircle(0, 0, 10).moveTo(0, 0).lineTo(0, - 10);
+	this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
+	this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
 	LayerStage.addChild(this.shape);
 
 	//Target shape
@@ -56,7 +57,8 @@ Player = function () {
 				self.body.m_fixtureList.m_shape.SetRadius(radius);
 				self.body.m_fixtureList.SetDensity(density);
 				self.body.ResetMassData();
-				self.shape.scaleX = self.shape.scaleY = radius;
+				self.shape.scaleX = radius * SIM_SCALE_X / 10;
+				self.shape.scaleY = radius * SIM_SCALE_Y / 10;
 				console.log(radius + ', ' + density);
 			});
 		self.isBig = becomeBig;
@@ -82,13 +84,13 @@ Player.prototype = {
 	},
 
 	renderUpdate: function () {
-		this.shape.x = this.body.GetPosition().x * SIM_SCALE;
-		this.shape.y = this.body.GetPosition().y * SIM_SCALE;
+		this.shape.x = this.body.GetPosition().x * SIM_SCALE_X;
+		this.shape.y = this.body.GetPosition().y * SIM_SCALE_Y;
 
-		this.shape.rotation = this.body.GetLinearVelocity().Angle();
+		//this.shape.rotation = this.body.GetLinearVelocity().Angle();
 
-		this.targetShape.x = this.targetPosition.x * SIM_SCALE;
-		this.targetShape.y = this.targetPosition.y * SIM_SCALE;
+		this.targetShape.x = this.targetPosition.x * SIM_SCALE_X;
+		this.targetShape.y = this.targetPosition.y * SIM_SCALE_Y;
 
 	}
 };

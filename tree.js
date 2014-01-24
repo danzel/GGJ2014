@@ -2,7 +2,7 @@ Tree = function (treeDef, x, y) {
 
 	//vars
 	this.def = treeDef;
-	this.radius = 4;
+	this.radius = treeDef.radius;
 	this.density = 0.2;
 
 
@@ -33,8 +33,9 @@ Tree = function (treeDef, x, y) {
 	this.container.addChild(this.sprite);
 
 	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, SIM_SCALE).moveTo(0, 0).lineTo(0, -SIM_SCALE);
-	this.shape.scaleX = this.shape.scaleY = this.radius;
+	this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10).moveTo(0, 0).lineTo(0, -10);
+	this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
+	this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
 	this.container.addChild(this.shape);
 
 	LayerStage.addChild(this.container);
@@ -53,8 +54,8 @@ Tree.prototype = {
 	},
 
 	renderUpdate: function () {
-		this.container.x = this.position().x * SIM_SCALE;
-		this.container.y = this.position().y * SIM_SCALE;
+		this.container.x = this.position().x * SIM_SCALE_X;
+		this.container.y = this.position().y * SIM_SCALE_Y;
 
 		this.shape.rotation = this.velocity().Angle();
 	}

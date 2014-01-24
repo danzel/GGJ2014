@@ -42,8 +42,9 @@ Cat = function (x, y) {
 
 	//Our shape
 	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#b44').drawCircle(0, 0, SIM_SCALE).moveTo(0, 0).lineTo(0, -SIM_SCALE);
-	this.shape.scaleX = this.shape.scaleY = this.radius;
+	this.shape.graphics.beginStroke('#b44').drawCircle(0, 0, 10).moveTo(0, 0).lineTo(0, -10);
+	this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
+	this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
 	LayerStage.addChild(this.shape);
 
 	var self = this;
@@ -59,7 +60,8 @@ Cat = function (x, y) {
 				self.body.m_fixtureList.m_shape.SetRadius(radius);
 				self.body.m_fixtureList.SetDensity(density);
 				self.body.ResetMassData();
-				self.shape.scaleX = self.shape.scaleY = radius;
+				self.shape.scaleX = radius * SIM_SCALE_X / 10;
+				self.shape.scaleY = radius * SIM_SCALE_Y / 10;
 
 				self.radius = radius;
 				self.minSeparation = self.radius * 4; // We'll move away from anyone nearer than this
@@ -84,9 +86,9 @@ Cat.prototype = {
 	},
 
 	renderUpdate: function () {
-		this.shape.x = this.position().x * SIM_SCALE;
-		this.shape.y = this.position().y * SIM_SCALE;
+		this.shape.x = this.position().x * SIM_SCALE_X;
+		this.shape.y = this.position().y * SIM_SCALE_Y;
 
-		this.shape.rotation = this.velocity().Angle();
+		//this.shape.rotation = this.velocity().Angle();
 	}
 };

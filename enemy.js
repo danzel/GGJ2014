@@ -27,8 +27,9 @@ Enemy = function (x, y) {
 
 	//Our shape
 	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, SIM_SCALE).moveTo(0, 0).lineTo(0, -SIM_SCALE);
-	this.shape.scaleX = this.shape.scaleY = this.radius;
+	this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10).moveTo(0, 0).lineTo(0, -10);
+	self.shape.scaleX = radius * SIM_SCALE_X / 10;
+	self.shape.scaleY = radius * SIM_SCALE_Y / 10;
 	LayerStage.addChild(this.shape);
 };
 Enemy.prototype = {
@@ -45,9 +46,9 @@ Enemy.prototype = {
 	},
 
 	renderUpdate: function () {
-		this.shape.x = this.position().x * SIM_SCALE;
-		this.shape.y = this.position().y * SIM_SCALE;
+		this.shape.x = this.position().x * SIM_SCALE_X;
+		this.shape.y = this.position().y * SIM_SCALE_Y;
 
-		this.shape.rotation = this.velocity().Angle();
+		//this.shape.rotation = this.velocity().Angle();
 	}
 };

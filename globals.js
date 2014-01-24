@@ -6,7 +6,8 @@ var LayerForeground;
 
 var world = new B2World(B2Vec2.Zero, true);
 var gamepad, gamepadStrategy, gamepads = [];
-var SIM_SCALE = 10;
+var SIM_SCALE_X = 10;
+var SIM_SCALE_Y = 5;
 
 var player;
 var playerControls;
@@ -69,10 +70,11 @@ function loadingComplete() {
 	var treeDef = {
 		img: Resources.getItem('rubble/tree_a_big'),
 		size: new B2Vec2(503, 539).Divide(1.2),
-		center: new B2Vec2(180, 450).Divide(1.2)
+		center: new B2Vec2(200, 460).Divide(1.2),
+		radius: 6
 	};
 
-	enemies.push(new Tree(treeDef, 90, 50));
+	enemies.push(new Tree(treeDef, 90, 80));
 	//enemies.push(new Enemy(90, 20));
 	//enemies.push(new Enemy(100, 40));
 
