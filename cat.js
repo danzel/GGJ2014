@@ -221,44 +221,48 @@ Cat.prototype = {
 
 		this.transforming = true;
 		this.aiState = null;
+		self.isBig = becomeBig;
 
-		createjs.Tween.get({ p: becomeBig ? 1 : 0, radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
+		if (this._tween) {
+			createjs.Tween.removeTweens(this._tween._target);
+		}
+		this._tween = createjs.Tween.get({ p: becomeBig ? 1 : 0, radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
 			.to(becomeBig ? { p: 0, radius: self.bigRadius, density: self.bigDensity } : { p: 1, radius: self.smallRadius, density: self.smallDensity }, 250, createjs.Ease.circIn)
 			.call(function () {
 				self.transforming = false;
-				self.isBig = becomeBig;
-			}).addEventListener('change', function (ev) {
+			self._tween = null;
+		});
+		this._tween.addEventListener('change', function (ev) {
 
-				var radius = ev.target.target.radius;
-				var density = ev.target.target.density;
-				self.body.m_fixtureList.m_shape.SetRadius(radius);
-				self.body.m_fixtureList.SetDensity(density);
-				self.body.ResetMassData();
-				if (self.shape) {
-					self.shape.scaleX = radius * SIM_SCALE_X / 10;
-					self.shape.scaleY = radius * SIM_SCALE_Y / 10;
-				}
-				self.radius = radius;
-				self.minSeparation = self.radius * 4; // We'll move away from anyone nearer than this
-				self.maxCohesion = self.radius * 10; //We'll move closer to anyone within this bound
+			var radius = ev.target.target.radius;
+			var density = ev.target.target.density;
+			self.body.m_fixtureList.m_shape.SetRadius(radius);
+			self.body.m_fixtureList.SetDensity(density);
+			self.body.ResetMassData();
+			if (self.shape) {
+				self.shape.scaleX = radius * SIM_SCALE_X / 10;
+				self.shape.scaleY = radius * SIM_SCALE_Y / 10;
+			}
+			self.radius = radius;
+			self.minSeparation = self.radius * 4; // We'll move away from anyone nearer than this
+			self.maxCohesion = self.radius * 10; //We'll move closer to anyone within this bound
 
-				var p = ev.target.target.p;
-				var pi = 1 - ev.target.target.p;
-				self.lionSprite.alpha = pi;
-				self.catSprite.alpha = p;
+			var p = ev.target.target.p;
+			var pi = 1 - ev.target.target.p;
+			self.lionSprite.alpha = pi;
+			self.catSprite.alpha = p;
 
-				self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.catImgW;
-				self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.catImgH;
+			self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.catImgW;
+			self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.catImgH;
 
-				self.lionSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.lionImgW;
-				self.lionSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.lionImgH;
+			self.lionSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.lionImgW;
+			self.lionSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.lionImgH;
 
-				if (self.shadow) {
-					self.shadow.scaleX = self.shadow.scaleY = radius / self.bigRadius;
-				}
+			if (self.shadow) {
+				self.shadow.scaleX = self.shadow.scaleY = radius / self.bigRadius;
+			}
 
-				self.healthBar.shape.y = -50 - 20 * pi;
-
-			});
+			self.healthBar.shape.y = -50 - 20 * pi;
+		});
 	}
 };
