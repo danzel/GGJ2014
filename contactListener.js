@@ -63,7 +63,10 @@ ContactListener.prototype = {
 			Events.publish('collision-cat-enemy', this.getCollisionPoint(contact), cat, enemy);
 
 			cat.takesDamage += (!enemy.dealtDamage) ? 1 : 0;
-			enemy.takesDamage += (!cat.dealtDamage) ? 1 : 0;
+
+			if (cat.isBig) {
+				enemy.takesDamage += (!cat.dealtDamage) ? 1 : 0;
+			}
 
 			enemy.dealtDamage = true;
 			cat.dealtDamage = true;
