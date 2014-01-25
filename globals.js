@@ -20,6 +20,13 @@ var enemies = [];
 var Events = new EventBroker();
 var Resources;
 
+var GameMode_Menu = 1;
+var GameMode_Game = 2;
+var GameMode = GameMode_Menu;
+
+var Faces = [];
+
+
 Math.sign = Math.sign || function (a) { return a > 0 ? 1 : a < 0 ? -1 : 0; };
 
 function init() {
@@ -35,14 +42,6 @@ function init() {
 
 	stage = new createjs.Stage('canvas');
 	createjs.DisplayObject.suppressCrossDomainErrors = true;
-
-	//Layers
-	LayerBackground = new createjs.Container();
-	stage.addChild(LayerBackground);
-	LayerStage = new createjs.Container();
-	stage.addChild(LayerStage);
-	LayerForeground = new createjs.Container();
-	stage.addChild(LayerForeground);
 
 	Resources = new createjs.LoadQueue(false);
 	Resources.installPlugin(createjs.Sound);
@@ -65,6 +64,31 @@ function loadingError(target, type, item, error) {
 }
 
 function loadingComplete() {
+	initMenu();
+
+	createjs.Ticker.setFPS(60);
+	createjs.Ticker.addEventListener("tick", function () {
+		gamepadStrategy.update();
+		if (GameMode == GameMode_Menu) {
+			menuTick(createjs.Ticker.getInterval() / 1000);
+			menuRendererTick();
+		} else {
+			gameTick(createjs.Ticker.getInterval() / 1000);
+			rendererTick();
+		}
+		stage.update();
+	});
+}
+
+function initGame() {
+
+	//Layers
+	LayerBackground = new createjs.Container();
+	stage.addChild(LayerBackground);
+	LayerStage = new createjs.Container();
+	stage.addChild(LayerStage);
+	LayerForeground = new createjs.Container();
+	stage.addChild(LayerForeground);
 
 	playerControls = new PlayerControls();
 
@@ -89,15 +113,6 @@ function loadingComplete() {
 	enemies.push(new Tree(treeDef, 90, 80));
 	//enemies.push(new Enemy(90, 20));
 	//enemies.push(new Enemy(100, 40));
-
-
-	createjs.Ticker.setFPS(60);
-	createjs.Ticker.addEventListener("tick", function () {
-		gamepadStrategy.update();
-		gameTick(createjs.Ticker.getInterval() / 1000);
-		rendererTick();
-		stage.update();
-	});
 }
 
 function gameTick(dt) {
