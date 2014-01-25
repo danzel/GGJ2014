@@ -114,6 +114,8 @@ Player = function () {
 					self.shadow.scaleY = radius / self.bigRadius;
 				}
 
+				self.sprite.framerate = self.isBig ? 8 : 16;
+
 				//console.log(radius + ', ' + density);
 			});
 		self.isBig = becomeBig;
@@ -146,6 +148,13 @@ Player.prototype = {
 	},
 
 	renderUpdate: function () {
+
+		if (this.velocity().LengthSquared() < 5 * 5) {
+			this.sprite.paused = true;
+		} else {
+			this.sprite.paused = false;
+		}
+
 		this.container.x = this.body.GetPosition().x * SIM_SCALE_X;
 		this.container.y = this.body.GetPosition().y * SIM_SCALE_Y;
 

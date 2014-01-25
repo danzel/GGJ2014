@@ -64,7 +64,7 @@ PlayerControls = function () {
 		self.laserPosition.x = this.x / SIM_SCALE_X;
 		self.laserPosition.y = this.y / SIM_SCALE_Y;
 
-		console.log(self.laserPosition);
+		//console.log(self.laserPosition);
 		Events.publish('player-laser-target-move', self.laserPosition);
 	});
 	return;
