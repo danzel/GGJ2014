@@ -132,8 +132,8 @@ Cat.prototype = {
 		this.container.x = this.position().x * SIM_SCALE_X;
 		this.container.y = this.position().y * SIM_SCALE_Y;
 
-		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * (Math.sign(this.velocity().x) || Math.sign(this.catSprite.scaleX));
-		this.lionSprite.scaleX = Math.abs(this.lionSprite.scaleX) * (Math.sign(this.velocity().x) || Math.sign(this.lionSprite.scaleX));
+		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * (Math.sign(this.forceToApply.x) || Math.sign(this.catSprite.scaleX));
+		this.lionSprite.scaleX = Math.abs(this.lionSprite.scaleX) * (Math.sign(this.forceToApply.x) || Math.sign(this.lionSprite.scaleX));
 
 		//this.shape.rotation = this.velocity().Angle();
 	}
