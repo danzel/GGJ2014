@@ -1,4 +1,7 @@
 function initCatGlobals() {
+
+	Events.create('cat-died');
+
 	var img = Resources.getResult('chara/lion_run');
 
 	Cat.lionImgW = 1020 / 3;
@@ -90,8 +93,6 @@ Cat = function (x, y) {
 	this.fixture.userData = this;
 	this.body.SetPosition(new B2Vec2(x, y));
 
-	var catImg = Resources.getResult('chara/cat');
-
 	this.catW = Cat.catImgW / 2;
 	this.catH = Cat.catImgH / 2;
 
@@ -136,16 +137,98 @@ Cat = function (x, y) {
 	this.container.addChildAt(this.shadow, 0);
 
 	Events.subscribe('player-toggle-bigness', function (becomeBig) {
-		becomeBig = !becomeBig;
-		self.isBig = becomeBig;
-		self.transforming = true;
-		self.aiState = null;
+
+		if (self.isDead()) {
+			return;
+		}
+
+		self.setBig(!becomeBig);
+	});
+
+};
+Cat.prototype = {
+	position: function () {
+		return this.body.GetPosition();
+	},
+
+	velocity: function () {
+		return this.body.GetLinearVelocity();
+	},
+
+	isDead: function () {
+		return this.health <= 0;
+	},
+
+	updateDamage: function () {
+		var wasDead = this.isDead();
+
+		if (this.takesDamage) {
+			this.health -= this.takesDamage * (this.isBig ? 1 : 2);
+			this.takesDamage = 0;
+		}
+
+		if (this.isDead()) {
+			if (!wasDead) {
+				this.die();
+			}
+			//deadies don't deal damage
+			this.dealtDamage = true;
+		} else {
+			this.dealtDamage = false;
+		}
+	},
+	die: function () {
+		Events.publish('cat-died', this.position(), this);
+		if (this.isBig) {
+			this.setBig(false);
+		}
+	},
+
+	update: function (dt) {
+
+	},
+
+	renderUpdate: function () {
+		this.container.x = this.position().x * SIM_SCALE_X;
+		this.container.y = this.position().y * SIM_SCALE_Y;
+
+		var sign = Math.sign(this.forceToApply.x) || Math.sign(this.catSprite.scaleX);
+
+		if (this.isDead()) {
+			sign = 1;
+			this.catSprite.gotoAndPlay('die');
+		} else if (this.aiState && this.aiState.waiting && !this.aiState.pounced) {
+			sign = this.position().x > this.aiState.target.position().x ? -1 : 1;
+			this.lionSprite.gotoAndStop(2);
+		} else if (this.aiState && this.aiState.pounced) {
+			this.lionSprite.gotoAndStop(1);
+		} else if (this.velocity().LengthSquared() < 1) {
+			this.lionSprite.gotoAndStop(0);
+		} else if (this.lionSprite.paused) {
+			this.lionSprite.gotoAndPlay('run');
+		}
+
+		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * sign;
+		this.lionSprite.scaleX = Math.abs(this.lionSprite.scaleX) * sign;
+		//this.shape.rotation = this.velocity().Angle();
+
+		this.healthBar.update(this.health);
+		this.healthBar.shape.alpha = (this.health < this.maxHealth && this.health > 0) ? 1 : 0;
+	},
+
+	setBig: function (becomeBig) {
+		var self = this;
+
+		this.transforming = true;
+		this.aiState = null;
 
 		createjs.Tween.get({ p: becomeBig ? 1 : 0, radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
 			.to(becomeBig ? { p: 0, radius: self.bigRadius, density: self.bigDensity } : { p: 1, radius: self.smallRadius, density: self.smallDensity }, 250, createjs.Ease.circIn)
 			.call(function () {
 				self.transforming = false;
+				self.isBig = becomeBig;
 			}).addEventListener('change', function (ev) {
+
 				var radius = ev.target.target.radius;
 				var density = ev.target.target.density;
 				self.body.m_fixtureList.m_shape.SetRadius(radius);
@@ -177,57 +260,5 @@ Cat = function (x, y) {
 				self.healthBar.shape.y = -50 - 20 * pi;
 
 			});
-		self.isBig = becomeBig;
-	});
-
-};
-Cat.prototype = {
-	position: function () {
-		return this.body.GetPosition();
-	},
-
-	velocity: function () {
-		return this.body.GetLinearVelocity();
-	},
-
-	isDead: function () {
-		return this.health <= 0;
-	},
-
-	updateDamage: function () {
-		if (this.takesDamage) {
-			this.health -= this.takesDamage * (this.isBig ? 1 : 2);
-			this.takesDamage = 0;
-		}
-		this.dealtDamage = false;
-	},
-
-	update: function (dt) {
-
-	},
-
-	renderUpdate: function () {
-		this.container.x = this.position().x * SIM_SCALE_X;
-		this.container.y = this.position().y * SIM_SCALE_Y;
-
-		var sign = Math.sign(this.forceToApply.x) || Math.sign(this.catSprite.scaleX);
-
-		if (this.aiState && this.aiState.waiting && !this.aiState.pounced) {
-			sign = this.position().x > this.aiState.target.position().x ? -1 : 1;
-			this.lionSprite.gotoAndStop(2);
-		} else if (this.aiState && this.aiState.pounced) {
-			this.lionSprite.gotoAndStop(1);
-		} else if (this.velocity().LengthSquared() < 1) {
-			this.lionSprite.gotoAndStop(0);
-		} else if (this.lionSprite.paused) {
-			this.lionSprite.gotoAndPlay('run');
-		}
-
-		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * sign;
-		this.lionSprite.scaleX = Math.abs(this.lionSprite.scaleX) * sign;
-		//this.shape.rotation = this.velocity().Angle();
-
-		this.healthBar.update(this.health);
-		this.healthBar.shape.alpha = (this.health < this.maxHealth && this.health > 0) ? 1 : 0;
 	}
 };
