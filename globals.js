@@ -48,11 +48,15 @@ function init() {
 	Resources.installPlugin(createjs.Sound);
 	Resources.on('complete', loadingComplete);
 
-	Resources.loadManifest([
+	var resourceArray = [
 		{ id: 'rubble/tree_a_big', src: 'imgs/rubble/tree_a_big.png' },
 		{ id: 'chara/cat', src: 'imgs/chara/mocks_cat.png' },
-		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' }
-	]);
+		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },
+		{ id: 'chara/catlady', src: 'imgs/chara/mocks_main_large.png' }
+	];
+	//Add other resources to the array here
+
+	Resources.loadManifest(resourceArray);
 }
 
 
