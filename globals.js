@@ -35,16 +35,6 @@ var parallaxScroll;
 Math.sign = Math.sign || function (a) { return a > 0 ? 1 : a < 0 ? -1 : 0; };
 
 function init() {
-	gamepadStrategy = new Gamepad.UpdateStrategies.ManualUpdateStrategy();
-	gamepad = new Gamepad(gamepadStrategy);
-	gamepad.deadzone = 0.1;
-	if (!gamepad.init()) {
-		console.log('fail at gamepad');
-	}
-	gamepad.bind(Gamepad.Event.CONNECTED, function (device) {
-		gamepads.push(device);
-	});
-
 	stage = new createjs.Stage('canvas');
 	createjs.DisplayObject.suppressCrossDomainErrors = true;
 
@@ -79,7 +69,6 @@ function loadingComplete() {
 	//createjs.Ticker.timingMode = createjs.Ticker.RAF;
 	createjs.Ticker.setFPS(60);
 	createjs.Ticker.addEventListener("tick", function (e) {
-		gamepadStrategy.update();
 		if (GameMode == GameMode_Menu) {
 			menuTick(createjs.Ticker.getInterval() / 1000);
 			menuRendererTick();

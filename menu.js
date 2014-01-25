@@ -103,7 +103,7 @@ function initMenu() {
 		return;
 	}
 
-	gamepad.bind(Gamepad.Event.BUTTON_DOWN, function (e) {
+/*	gamepad.bind(Gamepad.Event.BUTTON_DOWN, function (e) {
 		if (e.control == 'FACE_1') {
 
 			//Get the video frame
@@ -181,14 +181,14 @@ function initMenu() {
 		} else if (e.control == 'START_FORWARD' && Faces.length == 3) {
 			menuToGame();
 		}
-	});
+	});*/
 }
 
 function menuToGame() {
 	if (videoStream) {
 		videoStream.stop();
 	}
-	gamepad.unbind(Gamepad.Event.BUTTON_DOWN);
+	//gamepad.unbind(Gamepad.Event.BUTTON_DOWN);
 	stage.removeAllChildren();
 	initGame();
 	GameMode = GameMode_Game;
