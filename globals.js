@@ -196,6 +196,22 @@ function gameTick(dt) {
 	player.update(dt);
 	catHerd.update(dt);
 
+	for (i = enemies.length - 1; i >= 0; i--) {
+		if (!(enemies[i] instanceof Tree)) {
+			EnemyAi.preUpdate(dt, enemies[i], enemies, player);
+		}
+	}
+	//Move agents based on forces being applied (aka physics)
+	for (i = this.enemies.length - 1; i >= 0; i--) {
+		var agent = this.enemies[i];
+
+		if (agent.forceToApply) {
+			//Apply the force
+			//console.log(i + ': ' + agent.forceToApply.x + ', ' + agent.forceToApply.y);
+			agent.body.ApplyImpulse(agent.forceToApply.Multiply(dt), agent.position());
+		}
+	}
+
 	world.Step(dt, 10, 10);
 	world.ClearForces();
 

@@ -18,7 +18,7 @@ var CatAiLion = {
 
 				var distSqrd = B2Math.DistanceSquared(e.position(), cat.position());
 
-				if (distSqrd < closestDist) {
+				if (distSqrd < closestDist && !e.isDead()) {
 					//TODO: cast a ray?
 					closestDist = distSqrd;
 					closest = e;

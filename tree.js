@@ -50,6 +50,11 @@ Tree.prototype = {
 		return this.body.GetLinearVelocity();
 	},
 
+
+	isDead: function () {
+		return false;
+	},
+
 	updateDamage: function () {
 		//TREE DONT CARE
 	},

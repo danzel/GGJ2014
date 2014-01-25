@@ -5,6 +5,14 @@ Enemy = function (def, x, y) {
 
 	this.maxHealth = def.maxHealth;
 
+
+	this.maxForce = 3000;
+	this.maxForceSquared = this.maxForce * this.maxForce;
+
+	this.maxSpeed = 100;
+	this.maxSpeedSquared = this.maxSpeed * this.maxSpeed;
+
+
 	//vars
 	this.radius = def.radiusSmall;
 	this.density = def.densitySmall;
