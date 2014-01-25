@@ -2,6 +2,7 @@ var stage, renderer;
 
 var LayerBackground;
 var LayerStage;
+var LayerStageOver;
 var LayerForeground;
 
 var ParalaxScroll;
@@ -92,8 +93,15 @@ function initGame() {
 	//Layers
 	LayerBackground = new createjs.Container();
 	stage.addChild(LayerBackground);
+
+	var stageContainer = new createjs.Container();
+	stage.addChild(stageContainer);
+
 	LayerStage = new createjs.Container();
-	stage.addChild(LayerStage);
+	stageContainer.addChild(LayerStage);
+	LayerStageOver = new createjs.Container();
+	stageContainer.addChild(LayerStageOver);
+
 	LayerForeground = new createjs.Container();
 	stage.addChild(LayerForeground);
 
