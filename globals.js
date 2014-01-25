@@ -57,6 +57,7 @@ function init() {
 		{ id: 'chara/cat', src: 'imgs/chara/mocks_cat.png' },
 		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },
 		{ id: 'chara/lion_run', src: 'imgs/chara/lion_run.png' },
+		{ id: 'chara/doge_run', src: 'imgs/chara/doge_lion_run.png' },
 		{ id: 'chara/catlady', src: 'imgs/chara/mocks_main_large.png' }
 	];
 	//Add other resources to the array here
@@ -129,9 +130,18 @@ function initGame() {
 		center: new B2Vec2(200, 460).Divide(1.2),
 		radius: 6
 	};
+	var enemyDef = {
+		imgSmall: Resources.getResult('chara/doge_run'),
+		imgBig: Resources.getResult('chara/doge_run'),
+		radiusSmall: 2,
+		radiusBig: 4,
+
+		densitySmall: 0.2,
+		densityBig: 0.05,
+	};
 
 	enemies.push(new Tree(treeDef, 90, 80));
-	//enemies.push(new Enemy(90, 20));
+	enemies.push(new Enemy(enemyDef, 90, 120));
 	//enemies.push(new Enemy(100, 40));
 }
 

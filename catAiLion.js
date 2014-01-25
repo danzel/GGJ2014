@@ -10,17 +10,23 @@ var CatAiLion = {
 
 		if (!cat.aiState) {
 			//Is there anything close to us that we can see, try interact with it.
+			var closestDist = this.interestDistanceSquared;
+			var closest = null;
+
 			for (var i = enemies.length - 1; i >= 0; i--) {
 				var e = enemies[i];
 
 				var distSqrd = B2Math.DistanceSquared(e.position(), cat.position());
 
-				if (distSqrd < this.interestDistanceSquared) {
+				if (distSqrd < closestDist) {
 					//TODO: cast a ray?
-
-					this.interact(cat, e, dt);
-					return;
+					closestDist = distSqrd;
+					closest = e;
 				}
+			}
+
+			if (closest) {
+				this.interact(cat, closest, dt);
 			}
 		} else {
 			cat.aiState.handler.call(this, cat, dt);
@@ -46,7 +52,7 @@ var CatAiLion = {
 
 	interact: function (cat, enemy, dt) {
 
-		if (enemy instanceof Tree) {
+		if ((enemy instanceof Tree) || (enemy instanceof Enemy)) {
 			cat.aiState = { handler: this.interactTree, target: enemy, timeWaited: 0 };
 		} else if (enemy instanceof Enemy) {
 			//TODO

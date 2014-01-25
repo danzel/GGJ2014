@@ -1,9 +1,10 @@
-Enemy = function (x, y) {
+Enemy = function (def, x, y) {
+
+	this.def = def;
 
 	//vars
-	this.radius = 3;
-	this.density = 0.2;
-
+	this.radius = def.radiusSmall;
+	this.density = def.densitySmall;
 
 
 	//Create a physics body
@@ -27,9 +28,10 @@ Enemy = function (x, y) {
 
 	//Our shape
 	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10).moveTo(0, 0).lineTo(0, -10);
-	self.shape.scaleX = radius * SIM_SCALE_X / 10;
-	self.shape.scaleY = radius * SIM_SCALE_Y / 10;
+	this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10);
+	this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
+	this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
+
 	LayerStage.addChild(this.shape);
 };
 Enemy.prototype = {
