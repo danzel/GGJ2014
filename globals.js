@@ -143,6 +143,8 @@ function initGame() {
 
 		densitySmall: 0.2,
 		densityBig: 0.05,
+
+		maxHealth: 300
 	};
 
 	enemies.push(new Tree(treeDef, 90, 80));

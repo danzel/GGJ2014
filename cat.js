@@ -47,6 +47,7 @@ Cat = function (x, y) {
 	this.isBig = false;
 	this.health = this.maxHealth;
 
+	this.takesDamage = 0;
 
 	//Create a physics body
 	var fixDef = new B2FixtureDef();
@@ -170,9 +171,10 @@ Cat.prototype = {
 
 	updateDamage: function () {
 		if (this.takesDamage) {
-			this.health -= this.isBig ? 1 : 2;
-			this.takesDamage = false;
+			this.health -= this.takesDamage * (this.isBig ? 1 : 2);
+			this.takesDamage = 0;
 		}
+		this.dealtDamage = false;
 	},
 
 	update: function (dt) {

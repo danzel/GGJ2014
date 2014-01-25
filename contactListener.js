@@ -61,9 +61,11 @@ ContactListener.prototype = {
 
 			Events.publish('collision-cat-enemy', this.getCollisionPoint(contact), cat, enemy);
 
-			cat.takesDamage = true;
-			enemy.takesDamage = true;
+			cat.takesDamage += (!enemy.dealtDamage) ? 1 : 0;
+			enemy.takesDamage += (!cat.dealtDamage) ? 1 : 0;
 
+			enemy.dealtDamage = true;
+			cat.dealtDamage = true;
 			return;
 		}
 
@@ -74,9 +76,10 @@ ContactListener.prototype = {
 
 			Events.publish('collision-player-enemy', this.getCollisionPoint(contact), player, enemy);
 
-			player.takesDamage = true;
-			enemy.takesDamage = true;
+			player.takesDamage += (!enemy.dealtDamage) ? 1 : 0;
+			//enemy.takesDamage = true;
 
+			enemy.dealtDamage = true;
 			return;
 		}
 
