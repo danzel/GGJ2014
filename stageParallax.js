@@ -43,7 +43,7 @@ Parallax = function () {
 		LayerBackground.x = LayerBackground.x * 0.98 + bgDesired * 0.02;
 
 		var desired = -midX * SIM_SCALE_X + 1280 / 2;
-		LayerStage.x = LayerStageOver.x = LayerStage.x * 0.98 + desired * 0.02;
+		LayerStageUnder.x = LayerStage.x = LayerStageOver.x = LayerStage.x * 0.98 + desired * 0.02;
 
 		var foreDesired = -midX * fgScale * SIM_SCALE_X + 1280 / 2;
 		LayerForeground.x = LayerForeground.x * 0.98 + foreDesired * 0.02;
