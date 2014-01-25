@@ -39,13 +39,26 @@ Cat = function (x, y) {
 	this.fixture = this.body.CreateFixture(fixDef);
 	this.body.SetPosition(new B2Vec2(x, y));
 
+	var catImg = Resources.getItem('chara/cat');
 
 	//Our shape
+	this.container = new createjs.Container();
+	LayerStage.addChild(this.container);
+
+	this.scaleX = 100 / catImg.tag.width;
+
+	this.catSprite = new createjs.Bitmap(catImg.tag);
+	this.catSprite.scaleX = this.scaleX;
+	this.catSprite.scaleY = 50 / catImg.tag.height;
+	this.catSprite.regX = catImg.tag.width / 2; //treeDef.center.x / this.sprite.scaleX;
+	this.catSprite.regY = catImg.tag.height; //treeDef.center.y / this.sprite.scaleY;
+	this.container.addChild(this.catSprite);
+
 	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#b44').drawCircle(0, 0, 10).moveTo(0, 0).lineTo(0, -10);
+	this.shape.graphics.beginStroke('#b44').drawCircle(0, 0, 10);
 	this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
 	this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
-	LayerStage.addChild(this.shape);
+	this.container.addChild(this.shape);
 
 	var self = this;
 	Events.subscribe('player-toggle-bigness', function (becomeBig) {
@@ -90,8 +103,10 @@ Cat.prototype = {
 	},
 
 	renderUpdate: function () {
-		this.shape.x = this.position().x * SIM_SCALE_X;
-		this.shape.y = this.position().y * SIM_SCALE_Y;
+		this.container.x = this.position().x * SIM_SCALE_X;
+		this.container.y = this.position().y * SIM_SCALE_Y;
+
+		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * (Math.sign(this.velocity().x) || Math.sign(this.catSprite.scaleX));
 
 		//this.shape.rotation = this.velocity().Angle();
 	}

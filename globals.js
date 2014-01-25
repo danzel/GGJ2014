@@ -20,6 +20,8 @@ var enemies = [];
 var Events = new EventBroker();
 var Resources;
 
+Math.sign = Math.sign || function (a) { return a > 0 ? 1 : a < 0 ? -1 : 0; };
+
 function init() {
 	gamepadStrategy = new Gamepad.UpdateStrategies.ManualUpdateStrategy();
 	gamepad = new Gamepad(gamepadStrategy);
@@ -47,7 +49,9 @@ function init() {
 	Resources.on('complete', loadingComplete);
 
 	Resources.loadManifest([
-		{ id: 'rubble/tree_a_big', src: 'imgs/rubble/tree_a_big.png' }
+		{ id: 'rubble/tree_a_big', src: 'imgs/rubble/tree_a_big.png' },
+		{ id: 'chara/cat', src: 'imgs/chara/mocks_cat.png' },
+		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' }
 	]);
 }
 
