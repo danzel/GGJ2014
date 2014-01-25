@@ -36,11 +36,32 @@ Player = function () {
 	this.body.mass = 1;
 
 	//Our shape
+	var img = Resources.getItem('chara/catlady');
+
+	this.container = new createjs.Container();
+	LayerStage.addChild(this.container);
+
+	this.smallW = 50;
+	this.smallH = 100;
+	this.bigW = 150;
+	this.bigH = 300;
+
+	this.sprite = new createjs.Bitmap(img.tag);
+	this.sprite.scaleX = this.bigW / img.tag.width;
+	this.sprite.scaleY = this.bigH / img.tag.height;
+	this.sprite.regX = img.tag.width * 0.6; //treeDef.center.x / this.sprite.scaleX;
+	this.sprite.regY = img.tag.height * 0.9; //treeDef.center.y / this.sprite.scaleY;
+	this.container.addChild(this.sprite);
+
+
+
 	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#000').drawCircle(0, 0, 10).moveTo(0, 0).lineTo(0, - 10);
+	this.shape.graphics.beginStroke('#000').drawCircle(0, 0, 10);
 	this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
 	this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
-	LayerStage.addChild(this.shape);
+	this.container.addChild(this.shape);
+
+
 
 	//Target shape
 	this.targetShape = new createjs.Shape();
@@ -49,8 +70,8 @@ Player = function () {
 
 	var self = this;
 	Events.subscribe('player-toggle-bigness', function (becomeBig) {
-		createjs.Tween.get({ radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
-			.to(becomeBig ? { radius: self.bigRadius, density: self.bigDensity } : { radius: self.smallRadius, density: self.smallDensity }, 250, createjs.Ease.circIn)
+		createjs.Tween.get({ p: becomeBig ? 1 : 0, radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
+			.to(becomeBig ? { p: 0, radius: self.bigRadius, density: self.bigDensity } : { p: 1, radius: self.smallRadius, density: self.smallDensity }, 250, createjs.Ease.circIn)
 			.addEventListener('change', function (ev) {
 				var radius = ev.target.target.radius;
 				var density = ev.target.target.density;
@@ -59,6 +80,12 @@ Player = function () {
 				self.body.ResetMassData();
 				self.shape.scaleX = radius * SIM_SCALE_X / 10;
 				self.shape.scaleY = radius * SIM_SCALE_Y / 10;
+
+				var p = ev.target.target.p;
+				var pi = 1 - p;
+				self.sprite.scaleX = (p * self.smallW + self.bigW * pi) / img.tag.width;
+				self.sprite.scaleY = (p * self.smallH + self.bigH * pi) / img.tag.height;
+
 				console.log(radius + ', ' + density);
 			});
 		self.isBig = becomeBig;
@@ -75,6 +102,14 @@ Player = function () {
 
 };
 Player.prototype = {
+	position: function () {
+		return this.body.GetPosition();
+	},
+
+	velocity: function () {
+		return this.body.GetLinearVelocity();
+	},
+
 	update: function (dt) {
 
 		this.body.ApplyImpulse(this.movementDirection.Copy().Multiply(this.forceScale * dt), this.body.GetPosition());
@@ -84,10 +119,11 @@ Player.prototype = {
 	},
 
 	renderUpdate: function () {
-		this.shape.x = this.body.GetPosition().x * SIM_SCALE_X;
-		this.shape.y = this.body.GetPosition().y * SIM_SCALE_Y;
+		this.container.x = this.body.GetPosition().x * SIM_SCALE_X;
+		this.container.y = this.body.GetPosition().y * SIM_SCALE_Y;
 
 		//this.shape.rotation = this.body.GetLinearVelocity().Angle();
+		this.sprite.scaleX = Math.abs(this.sprite.scaleX) * (Math.sign(this.velocity().x) || Math.sign(this.sprite.scaleX));
 
 		this.targetShape.x = this.targetPosition.x * SIM_SCALE_X;
 		this.targetShape.y = this.targetPosition.y * SIM_SCALE_Y;
