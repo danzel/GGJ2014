@@ -3,6 +3,7 @@ var stage, renderer;
 var LayerBackground;
 var LayerStage;
 var LayerForeground;
+var ParalaxScroll;
 
 var world = new B2World(B2Vec2.Zero, true);
 var gamepad, gamepadStrategy, gamepads = [];
@@ -55,12 +56,14 @@ function init() {
 		{ id: 'chara/catlady', src: 'imgs/chara/mocks_main_large.png' }
 	];
 	//Add other resources to the array here
+	resourceArray = resourceArray.concat(paralaxResources);
 
 	Resources.loadManifest(resourceArray);
 }
 
 
 function loadingComplete() {
+	ParalaxScroll = new Paralax();
 
 	playerControls = new PlayerControls();
 
@@ -111,6 +114,7 @@ function gameTick(dt) {
 function rendererTick() {
 	var i;
 	player.renderUpdate();
+	ParalaxScroll.update();
 
 	for (i = cats.length - 1; i >= 0; i--) {
 		cats[i].renderUpdate();
