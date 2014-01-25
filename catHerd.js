@@ -11,6 +11,7 @@ CatHerd.prototype = {
 			
 			if (agent.isDead()) {
 				//nothing :(((((((
+				agent.forceToApply = B2Vec2.Zero;
 			} else if (agent.transforming) {
 				CatAiTransforming.preUpdate(dt, agent, this.cats, this.owner);
 			} else if (agent.isBig) {

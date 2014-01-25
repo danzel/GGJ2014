@@ -170,7 +170,7 @@ Cat.prototype = {
 	},
 
 	isDead: function () {
-		return this.health > 0;
+		return this.health <= 0;
 	},
 
 	updateDamage: function () {
