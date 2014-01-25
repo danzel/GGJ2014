@@ -54,7 +54,6 @@ function init() {
 		{ id: 'chara/cat', src: 'imgs/chara/mocks_cat.png' },
 		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },
 		{ id: 'chara/lion_run', src: 'imgs/chara/lion_run.png' },
-		{ id: 'chara/lion_run2', src: 'imgs/chara/lion_run2.png' },
 		{ id: 'chara/catlady', src: 'imgs/chara/mocks_main_large.png' }
 	];
 	//Add other resources to the array here
@@ -69,8 +68,6 @@ function loadingError(target, type, item, error) {
 
 function loadingComplete() {
 
-	ParalaxScroll = new Paralax();
-
 	initMenu();
 
 	//createjs.Ticker.timingMode = createjs.Ticker.RAF;
@@ -82,7 +79,7 @@ function loadingComplete() {
 			menuRendererTick();
 		} else {
 			gameTick(createjs.Ticker.getInterval() / 1000);
-			rendererTick();
+			rendererTick(createjs.Ticker.getInterval() / 1000);
 		}
 		stage.update(e);
 	});
@@ -97,6 +94,9 @@ function initGame() {
 	stage.addChild(LayerStage);
 	LayerForeground = new createjs.Container();
 	stage.addChild(LayerForeground);
+
+	ParalaxScroll = new Paralax();
+
 
 	initCatGlobals();
 
@@ -137,10 +137,10 @@ function gameTick(dt) {
 
 }
 
-function rendererTick() {
+function rendererTick(dt) {
 	var i;
 	player.renderUpdate();
-	ParalaxScroll.update();
+	ParalaxScroll.update(dt);
 
 	for (i = cats.length - 1; i >= 0; i--) {
 		cats[i].renderUpdate();
