@@ -19,6 +19,7 @@ Tree = function (treeDef, x, y) {
 	//Physics body
 	this.body = world.CreateBody(bodyDef);
 	this.fixture = this.body.CreateFixture(fixDef);
+	this.fixture.userData = this;
 	this.body.SetPosition(new B2Vec2(x, y));
 
 

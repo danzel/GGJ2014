@@ -91,6 +91,7 @@ function loadingComplete() {
 
 function initGame() {
 
+	world.SetContactListener(new ContactListener());
 	//Layers
 	LayerBackground = new createjs.Container();
 	stage.addChild(LayerBackground);
