@@ -1,9 +1,32 @@
+function initPlayerGlobals() {
+	var img = Resources.getResult('chara/catlady');
+
+	Player.imgW = 430;
+	Player.imgH = 685;
+
+	Player.runSheet = new createjs.SpriteSheet({
+		images: [img],
+		frames: {
+			width: Player.imgW,
+			height: Player.imgH,
+
+			regX: Player.imgW / 2,
+			regY: Player.imgH - 40,
+			count: 8
+		},
+
+		animations: {
+			run: [0, 7, 'run']
+		}
+	});
+}
+
 Player = function () {
 
 	//const
 	this.smallRadius = 2;
 	this.bigRadius = 6;
-	this.smallDensity = 0.5;
+	this.smallDensity = 0.7;
 	this.bigDensity = 0.1;
 
 	this.laserRange = 40;
@@ -37,22 +60,19 @@ Player = function () {
 	this.body.mass = 1;
 
 	//Our shape
-	var img = Resources.getResult('chara/catlady');
-
 	this.container = new createjs.Container();
 	LayerStage.addChild(this.container);
 
-	this.smallW = 50;
-	this.smallH = 100;
-	this.bigW = 150;
-	this.bigH = 300;
+	this.smallW = Player.imgW / 6;
+	this.smallH = Player.imgH / 6;
+	this.bigW = Player.imgW / 3;
+	this.bigH = Player.imgH / 3;
 
-	this.sprite = new createjs.Bitmap(img);
-	this.sprite.scaleX = this.bigW / img.width;
-	this.sprite.scaleY = this.bigH / img.height;
-	this.sprite.regX = img.width * 0.6; //treeDef.center.x / this.sprite.scaleX;
-	this.sprite.regY = img.height * 0.9; //treeDef.center.y / this.sprite.scaleY;
+	this.sprite = new createjs.Sprite(Player.runSheet, 'run');
+	this.sprite.scaleX = this.bigW / Player.imgW;
+	this.sprite.scaleY = this.bigH / Player.imgH;
 	this.container.addChild(this.sprite);
+	this.sprite.framerate = 8; //TODO: Set based on speed, idle animation other wise
 
 
 
@@ -87,14 +107,14 @@ Player = function () {
 				}
 				var p = ev.target.target.p;
 				var pi = 1 - p;
-				self.sprite.scaleX = (p * self.smallW + self.bigW * pi) / img.width;
-				self.sprite.scaleY = (p * self.smallH + self.bigH * pi) / img.height;
+				self.sprite.scaleX = (p * self.smallW + self.bigW * pi) / Player.imgW;
+				self.sprite.scaleY = (p * self.smallH + self.bigH * pi) / Player.imgH;
 				if (self.shadow) {
 					self.shadow.scaleX = radius / self.bigRadius;
 					self.shadow.scaleY = radius / self.bigRadius;
 				}
 
-				console.log(radius + ', ' + density);
+				//console.log(radius + ', ' + density);
 			});
 		self.isBig = becomeBig;
 		console.log(becomeBig);

@@ -52,7 +52,7 @@ function init() {
 		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },
 		{ id: 'chara/lion_run', src: 'imgs/chara/lion_run.png' },
 		{ id: 'chara/doge_run', src: 'imgs/chara/doge_lion_run.png' },
-		{ id: 'chara/catlady', src: 'imgs/chara/mocks_main_large.png' }
+		{ id: 'chara/catlady', src: 'imgs/chara/main_walk.png' }
 	];
 	//Add other resources to the array here
 	resourceArray = resourceArray.concat(parallaxResources);
@@ -112,6 +112,7 @@ function initGame() {
 
 
 	initCatGlobals();
+	initPlayerGlobals();
 
 	playerControls = new PlayerControls();
 
