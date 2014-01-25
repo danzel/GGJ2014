@@ -48,7 +48,7 @@ function init() {
 
 	var resourceArray = [
 		{ id: 'rubble/tree_a_big', src: 'imgs/rubble/tree_a_big.png' },
-		{ id: 'chara/cat', src: 'imgs/chara/mocks_cat.png' },
+		{ id: 'chara/cat', src: 'imgs/chara/cat_run.png' },
 		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },
 		{ id: 'chara/lion_run', src: 'imgs/chara/lion_run.png' },
 		{ id: 'chara/doge_run', src: 'imgs/chara/doge_lion_run.png' },

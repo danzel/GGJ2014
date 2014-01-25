@@ -19,6 +19,28 @@ function initCatGlobals() {
 			run: [0, 2, 'run']
 		}
 	});
+
+	img = Resources.getResult('chara/cat');
+
+	Cat.catImgW = 155;
+	Cat.catImgH = 120;
+
+	Cat.catRunSheet = new createjs.SpriteSheet({
+		images: [img],
+		frames: {
+			width: Cat.catImgW,
+			height: Cat.catImgH,
+			
+			regX: Cat.catImgW / 2,
+			regY: Cat.catImgH - 2,
+			count: 5
+		},
+
+		animations: {
+			run: [0, 3, 'run'],
+			die: [4, 4, 'die']
+		}
+	});
 }
 
 Cat = function (x, y) {
@@ -70,8 +92,8 @@ Cat = function (x, y) {
 
 	var catImg = Resources.getResult('chara/cat');
 
-	this.catW = 100;
-	this.catH = 50;
+	this.catW = Cat.catImgW / 2;
+	this.catH = Cat.catImgH / 2;
 
 	this.lionW = 160;
 	this.lionH = 130;
@@ -82,11 +104,10 @@ Cat = function (x, y) {
 
 
 
-	this.catSprite = new createjs.Bitmap(catImg);
-	this.catSprite.scaleX = this.catW / catImg.width;
-	this.catSprite.scaleY = this.catH / catImg.height;
-	this.catSprite.regX = catImg.width / 2;
-	this.catSprite.regY = catImg.height;
+	this.catSprite = new createjs.Sprite(Cat.catRunSheet, 'run');
+	this.catSprite.scaleX = this.catW / Cat.catImgW;
+	this.catSprite.scaleY = this.catH / Cat.catImgH;
+	this.catSprite.framerate = 6; //TODO: Set based on speed, idle animation other wise
 	this.container.addChild(this.catSprite);
 
 	this.lionSprite = new createjs.Sprite(Cat.lionRunSheet, 'run');
@@ -143,8 +164,8 @@ Cat = function (x, y) {
 				self.lionSprite.alpha = pi;
 				self.catSprite.alpha = p;
 
-				self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / catImg.width;
-				self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / catImg.height;
+				self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.catImgW;
+				self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.catImgH;
 
 				self.lionSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.lionImgW;
 				self.lionSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.lionImgH;
