@@ -47,6 +47,7 @@ function init() {
 	Resources = new createjs.LoadQueue(false);
 	Resources.installPlugin(createjs.Sound);
 	Resources.on('complete', loadingComplete);
+	Resources.on('error', loadingError);
 
 	var resourceArray = [
 		{ id: 'rubble/tree_a_big', src: 'imgs/rubble/tree_a_big.png' },
@@ -59,6 +60,9 @@ function init() {
 	Resources.loadManifest(resourceArray);
 }
 
+function loadingError(target, type, item, error) {
+	console.log('loading error: ' + target + ' ' + type + ' ' + item + ' ' + error);
+}
 
 function loadingComplete() {
 
