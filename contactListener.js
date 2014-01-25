@@ -41,6 +41,9 @@ ContactListener.prototype = {
 			var enemyIs = (contact.GetFixtureA().userData instanceof Enemy) ? 'enemy' : 'tree';
 			Events.publish('collision-' + catIs + '-' + enemyIs, new B2Vec2(x, y), cat, enemy);
 
+			cat.takesDamage = true;
+			enemy.takesDamage = true;
+
 			return;
 		}
 

@@ -87,6 +87,10 @@ Enemy.prototype = {
 		return this.body.GetLinearVelocity();
 	},
 
+	updateDamage: function () {
+		//TODO
+	},
+
 	update: function (dt) {
 
 	},

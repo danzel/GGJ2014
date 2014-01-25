@@ -190,6 +190,16 @@ function gameTick(dt) {
 
 	world.Step(dt, 10, 10);
 	world.ClearForces();
+
+	var i;
+
+	for (i = cats.length - 1; i >= 0; i--) {
+		cats[i].updateDamage();
+	}
+
+	for (i = enemies.length - 1; i >= 0; i--) {
+		enemies[i].updateDamage();
+	}
 }
 
 function rendererTick(dt) {

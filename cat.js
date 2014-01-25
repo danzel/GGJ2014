@@ -158,6 +158,13 @@ Cat.prototype = {
 		return this.body.GetLinearVelocity();
 	},
 
+	updateDamage: function () {
+		if (this.takesDamage) {
+			this.health -= this.isBig ? 1 : 2;
+			this.takesDamage = false;
+		}
+	},
+
 	update: function (dt) {
 
 	},

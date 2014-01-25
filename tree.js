@@ -50,6 +50,10 @@ Tree.prototype = {
 		return this.body.GetLinearVelocity();
 	},
 
+	updateDamage: function () {
+		//TREE DONT CARE
+	},
+
 	update: function (dt) {
 
 	},
