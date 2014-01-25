@@ -8,9 +8,9 @@ Paralax = function(){
 
 	//Init
 	this.planes = {
-		// farPlane: new Plane(0.7,0 ,"farPlane"),
-		// playerPlane: new Plane(1.0,30 ,"playerPlane"),
-		nearPlane: new Plane(1.2, 0 ,"nearPlane")
+		//farPlane: new Plane(0.7,0 ,"farPlane"),
+		//playerPlane: new Plane(1.0,30 ,"playerPlane"),
+		nearPlane: new Plane(1.2, stage.canvas.height - Resources.getResult("nearPlane").height ,"nearPlane")
 	}
 
 this.update = function(){

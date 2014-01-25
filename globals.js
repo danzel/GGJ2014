@@ -68,9 +68,9 @@ function loadingError(target, type, item, error) {
 }
 
 function loadingComplete() {
-<<<<<<< HEAD
+
 	ParalaxScroll = new Paralax();
-=======
+
 	initMenu();
 
 	//createjs.Ticker.timingMode = createjs.Ticker.RAF;
@@ -99,9 +99,6 @@ function initGame() {
 	stage.addChild(LayerForeground);
 
 	initCatGlobals();
-
-
->>>>>>> ad69d73a8eacf10fbb4287c98e59ab5be086dd3a
 
 	playerControls = new PlayerControls();
 
