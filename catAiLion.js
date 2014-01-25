@@ -66,15 +66,13 @@ var CatAiLion = {
 
 		if (dist > this.interestDistance / 2) {
 			cat.forceToApply = this.steeringBehaviourSeek(cat, tree.position());
-		} else if (!cat.aiState.pounced) {
+		} else {
 			cat.aiState.timeWaited += dt;
 			if (cat.aiState.timeWaited >= 1) {
 				cat.forceToApply = tree.position().Copy().Subtract(cat.position()).Multiply(cat.maxForce * 100);
 
 				cat.aiState.pounced = true;
 			}
-		} else {
-			//have pounced... todo
 		}
 	},
 
