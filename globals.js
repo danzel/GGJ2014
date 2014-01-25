@@ -114,7 +114,6 @@ function initGame() {
 	stage.addChild(LayerForeground);
 
 	parallaxScroll = new Parallax();
-	particles = new ParticleEffects();
 
 
 	initCatGlobals();
@@ -151,6 +150,10 @@ function initGame() {
 	enemies.push(new Tree(treeDef, 90, 80));
 	enemies.push(new Enemy(enemyDef, 90, 120));
 	//enemies.push(new Enemy(100, 40));
+
+
+	particles = new ParticleEffects();
+
 }
 
 function createWalls() {
