@@ -43,7 +43,7 @@ Player = function () {
 	this.laserPosition = new B2Vec2(50, 50);
 
 	this.health = this.maxHealth;
-
+	this.takesDamage = 0;
 
 	//Create a physics body
 	var fixDef = new B2FixtureDef();
@@ -61,6 +61,7 @@ Player = function () {
 	//Physics body
 	this.body = world.CreateBody(bodyDef);
 	this.fixture = this.body.CreateFixture(fixDef);
+	this.fixture.userData = this;
 	this.body.SetPosition(new B2Vec2(50, 50));
 	this.body.mass = 1;
 
@@ -152,6 +153,18 @@ Player.prototype = {
 
 	velocity: function () {
 		return this.body.GetLinearVelocity();
+	},
+
+	isDead: function () {
+		return this.health <= 0;
+	},
+
+	updateDamage: function () {
+		if (this.takesDamage) {
+			this.health -= this.takesDamage * (this.isBig ? 1 : 2);
+			this.takesDamage = 0;
+		}
+		this.dealtDamage = false;
 	},
 
 	update: function (dt) {
