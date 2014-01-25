@@ -55,12 +55,14 @@ Player = function () {
 
 
 
-	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#000').drawCircle(0, 0, 10);
-	this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
-	this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
-	this.container.addChild(this.shape);
+	//this.shape = new createjs.Shape();
+	//this.shape.graphics.beginStroke('#000').drawCircle(0, 0, 10);
+	//this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
+	//this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
+	//this.container.addChild(this.shape);
 
+	this.shadow = Shadow.create(this.bigRadius * SIM_SCALE_X * 2, this.bigRadius * SIM_SCALE_Y * 2, 20);
+	this.container.addChildAt(this.shadow, 0);
 
 
 	//Target shape
@@ -78,13 +80,18 @@ Player = function () {
 				self.body.m_fixtureList.m_shape.SetRadius(radius);
 				self.body.m_fixtureList.SetDensity(density);
 				self.body.ResetMassData();
-				self.shape.scaleX = radius * SIM_SCALE_X / 10;
-				self.shape.scaleY = radius * SIM_SCALE_Y / 10;
-
+				if (self.shape) {
+					self.shape.scaleX = radius * SIM_SCALE_X / 10;
+					self.shape.scaleY = radius * SIM_SCALE_Y / 10;
+				}
 				var p = ev.target.target.p;
 				var pi = 1 - p;
 				self.sprite.scaleX = (p * self.smallW + self.bigW * pi) / img.width;
 				self.sprite.scaleY = (p * self.smallH + self.bigH * pi) / img.height;
+				if (self.shadow) {
+					self.shadow.scaleX = radius / self.bigRadius;
+					self.shadow.scaleY = radius / self.bigRadius;
+				}
 
 				console.log(radius + ', ' + density);
 			});

@@ -72,6 +72,7 @@ var CatAiLion = {
 			cat.aiState.timeWaited += dt;
 			if (cat.aiState.timeWaited >= 1) {
 				cat.forceToApply = tree.position().Copy().Subtract(cat.position()).Multiply(cat.maxForce * 100);
+				cat.forceToApply = this.steeringBehaviourWander(cat, tree.position(), 1, dt).Multiply(cat.maxForce * 100);
 
 				cat.aiState.pounced = true;
 			}
@@ -179,6 +180,17 @@ var CatAiLion = {
 
 		//Steer towards that heading
 		return this.steerTowards(agent, averageHeading);
+	},
+
+	steeringBehaviourWander: function (agent, target, diameter, dt) {
+		if (agent.aiState._wanderTimer >= 4 || !agent.aiState._wanderPoint || B2Math.DistanceSquared(agent.position(), agent.aiState._wanderPoint) < 5 * 5) {
+			agent.aiState._wanderTimer = 0;
+			agent.aiState._wanderPoint = target.Copy().Add2((Math.random() - 0.5) * diameter, (Math.random() - 0.5) * diameter);
+		}
+
+		agent._wanderTimer += dt;
+
+		return this.steeringBehaviourSeek(agent, agent.aiState._wanderPoint).Multiply(0.2);
 	},
 
 	steerTowards: function (agent, desiredDirection) {
