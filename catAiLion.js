@@ -35,7 +35,7 @@ var CatAiLion = {
 		return;
 
 		//Work out our behaviours
-		var seek = this.steeringBehaviourSeek(cat, this.owner.targetPosition);
+		var seek = this.steeringBehaviourSeek(cat, this.owner.laserPosition);
 		var sep = this.steeringBehaviourSeparation(cat);
 		var alg = this.steeringBehaviourAlignment(cat);
 		var coh = this.steeringBehaviourCohesion(cat);

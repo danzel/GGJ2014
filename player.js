@@ -14,7 +14,8 @@ Player = function () {
 	this.radius = this.bigRadius;
 
 	this.movementDirection = B2Vec2.Zero;
-	this.laserOffset = B2Vec2.Zero;
+	this.laserPositionOrig = B2Vec2.Zero;
+	this.laserPosition = new B2Vec2(50, 50);
 
 	//Create a physics body
 	var fixDef = new B2FixtureDef();
@@ -99,8 +100,9 @@ Player = function () {
 		console.log(becomeBig);
 	});
 
-	Events.subscribe('player-laser-target-move', function (offset) {
-		self.laserOffset = offset;
+	Events.subscribe('player-laser-target-move', function (pos) {
+		self.laserPositionOrig = pos;
+		self.laserPosition = pos.Copy().Add2(-LayerStage.x, 0);
 	});
 
 	Events.subscribe('player-movement-direction', function (dir) {
@@ -120,9 +122,7 @@ Player.prototype = {
 	update: function (dt) {
 
 		this.body.ApplyImpulse(this.movementDirection.Copy().Multiply(this.forceScale * dt), this.body.GetPosition());
-
-		this.targetPosition = this.body.GetPosition().Copy()
-			.Add2(this.laserOffset.x, this.laserOffset.y);
+		this.laserPosition = this.laserPositionOrig.Copy().Add2(-LayerStage.x / SIM_SCALE_X, 0);
 	},
 
 	renderUpdate: function () {
@@ -132,8 +132,8 @@ Player.prototype = {
 		//this.shape.rotation = this.body.GetLinearVelocity().Angle();
 		this.sprite.scaleX = Math.abs(this.sprite.scaleX) * (Math.sign(this.velocity().x) || Math.sign(this.sprite.scaleX));
 
-		this.targetShape.x = this.targetPosition.x * SIM_SCALE_X;
-		this.targetShape.y = this.targetPosition.y * SIM_SCALE_Y;
+		this.targetShape.x = this.laserPosition.x * SIM_SCALE_X;
+		this.targetShape.y = this.laserPosition.y * SIM_SCALE_Y;
 
 	}
 };

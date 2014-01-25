@@ -5,7 +5,7 @@ var CatAiKitten = {
 		this.owner = player;
 
 		//Work out our behaviours
-		var seek = this.steeringBehaviourSeekMaybe(cat, this.owner.targetPosition, dt);
+		var seek = this.steeringBehaviourSeekMaybe(cat, this.owner.laserPosition, dt);
 		var sep = this.steeringBehaviourSeparation(cat);
 		var alg = this.steeringBehaviourAlignment(cat);
 		var coh = this.steeringBehaviourCohesion(cat);

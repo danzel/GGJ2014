@@ -4,7 +4,7 @@ PlayerControls = function () {
 	Events.create('player-movement-direction');
 	Events.create('player-laser-target-move');
 
-	this.laserOffset = new B2Vec2();
+	this.laserPosition = new B2Vec2();
 	this.movementDirection = new B2Vec2();
 
 	var self = this;
@@ -58,16 +58,12 @@ PlayerControls = function () {
 
 	mouse.on('move', function (e) {
 
-		//Calculate player screen pos
+		//todo: scroll care
+		self.laserPosition.x = this.x / SIM_SCALE_X;
+		self.laserPosition.y = this.y / SIM_SCALE_Y;
 
-		var p = player.container.localToGlobal(0, 0);
-		var p2 = player.position();
-
-		self.laserOffset.x = (this.x - p.x) / SIM_SCALE_X;
-		self.laserOffset.y = (this.y - p.y) / SIM_SCALE_Y;
-
-		console.log(self.laserOffset);
-		Events.publish('player-laser-target-move', self.laserOffset);
+		console.log(self.laserPosition);
+		Events.publish('player-laser-target-move', self.laserPosition);
 	});
 	return;
 };
