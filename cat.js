@@ -32,7 +32,7 @@ function initCatGlobals() {
 			height: Cat.catImgH,
 			
 			regX: Cat.catImgW / 2,
-			regY: Cat.catImgH - 2,
+			regY: Cat.catImgH - 10,
 			count: 5
 		},
 
