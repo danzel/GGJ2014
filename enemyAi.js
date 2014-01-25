@@ -5,6 +5,11 @@ var EnemyAi = {
 
 	preUpdate: function (dt, enemy, enemies, player) {
 
+		if (enemy.isDead()) {
+			enemy.forceToApply = B2Vec2.Zero;
+			return;
+		}
+
 		this.enemies = enemies;
 		this.player = player;
 
