@@ -5,6 +5,7 @@ var LayerBackground;
 var LayerStage;
 var LayerStageOver;
 var LayerForeground;
+var LayerStaticOverlay;
 
 var ParalaxScroll;
 
@@ -15,6 +16,7 @@ var SIM_SCALE_Y = 5;
 
 var player;
 var playerControls;
+var powerMeter;
 
 var cats = [];
 var catHerd;
@@ -23,6 +25,7 @@ var enemies = [];
 
 var Events = new EventBroker();
 var Resources;
+var particles;
 
 var GameMode_Menu = 1;
 var GameMode_Game = 2;
@@ -102,6 +105,9 @@ function initGame() {
 	LayerForeground = new createjs.Container();
 	stage.addChild(LayerForeground);
 
+	LayerStaticOverlay = new createjs.Container();
+	stage.addChild(LayerStaticOverlay);
+
 	parallaxScroll = new Parallax();
 
 
@@ -119,6 +125,8 @@ function initGame() {
 	cats.push(new Cat(15, 45));
 
 	catHerd = new CatHerd(cats, player);
+
+	powerMeter = new PowerMeter();
 
 	var treeDef = {
 		img: Resources.getResult('rubble/tree_a_big'),
@@ -197,6 +205,8 @@ function gameTick(dt) {
 	for (i = enemies.length - 1; i >= 0; i--) {
 		enemies[i].updateDamage();
 	}
+
+	powerMeter.update(dt);
 }
 
 function rendererTick(dt) {

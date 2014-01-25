@@ -52,7 +52,9 @@ PlayerControls = function () {
 	});
 
 	KeyboardJS.on('spacebar', function () {
+		if (powerMeter.isReady()) {
 			Events.publish('player-toggle-bigness', !player.isBig);
+		}
 	});
 
 
