@@ -12,6 +12,7 @@ B2MassData = Box2D.Collision.Shapes.b2MassData;
 B2Shape = Box2D.Collision.Shapes.b2Shape;
 B2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
 B2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
+B2Contact = Box2D.Dynamics.Contacts.b2Contact;
 
 B2Vec2.Zero = Box2D.Common.Math.b2Math.b2Vec2_zero;
 

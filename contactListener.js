@@ -4,7 +4,12 @@ ContactListener = function () {
 	Events.create('collision-player-enemy');
 };
 ContactListener.prototype = {
-	BeginContact: function (contact) {
+	PreSolve: function (contact, oldManifold) {
+
+		if ((contact.m_flags & B2Contact.e_touchingFlag) == 0) {
+			return;
+		}
+
 		//cat on cat
 		if ((contact.GetFixtureA().userData instanceof Cat) && (contact.GetFixtureB().userData instanceof Cat)) {
 			return;
@@ -50,6 +55,6 @@ ContactListener.prototype = {
 		//console.log('begin', contact);
 	},
 	EndContact: function (contact) { },
-	PreSolve: function (contact, oldManifold) { },
+	BeginContact: function (contact) { },
 	PostSolve: function (contact, impulse) { }
 };
