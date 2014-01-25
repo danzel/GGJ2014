@@ -25,9 +25,9 @@ Tree = function (treeDef, x, y) {
 	//Our shape
 	this.container = new createjs.Container();
 
-	this.sprite = new createjs.Bitmap(treeDef.img.tag);
-	this.sprite.scaleX = treeDef.size.x / treeDef.img.tag.width;
-	this.sprite.scaleY = treeDef.size.y / treeDef.img.tag.height;
+	this.sprite = new createjs.Bitmap(treeDef.img);
+	this.sprite.scaleX = treeDef.size.x / treeDef.img.width;
+	this.sprite.scaleY = treeDef.size.y / treeDef.img.height;
 	this.sprite.regX = treeDef.center.x / this.sprite.scaleX;
 	this.sprite.regY = treeDef.center.y / this.sprite.scaleY;
 	this.container.addChild(this.sprite);

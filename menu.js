@@ -60,7 +60,8 @@ function initMenu() {
 	text.y = 120;
 	stage.addChild(text);
 
-	if (false) { //HACKED OFF navigator.getUserMedia) {
+	if (false) {
+	//if (navigator.getUserMedia) {
 		// Request access to video only
 		navigator.getUserMedia(
 			{

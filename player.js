@@ -36,7 +36,7 @@ Player = function () {
 	this.body.mass = 1;
 
 	//Our shape
-	var img = Resources.getItem('chara/catlady');
+	var img = Resources.getResult('chara/catlady');
 
 	this.container = new createjs.Container();
 	LayerStage.addChild(this.container);
@@ -46,11 +46,11 @@ Player = function () {
 	this.bigW = 150;
 	this.bigH = 300;
 
-	this.sprite = new createjs.Bitmap(img.tag);
-	this.sprite.scaleX = this.bigW / img.tag.width;
-	this.sprite.scaleY = this.bigH / img.tag.height;
-	this.sprite.regX = img.tag.width * 0.6; //treeDef.center.x / this.sprite.scaleX;
-	this.sprite.regY = img.tag.height * 0.9; //treeDef.center.y / this.sprite.scaleY;
+	this.sprite = new createjs.Bitmap(img);
+	this.sprite.scaleX = this.bigW / img.width;
+	this.sprite.scaleY = this.bigH / img.height;
+	this.sprite.regX = img.width * 0.6; //treeDef.center.x / this.sprite.scaleX;
+	this.sprite.regY = img.height * 0.9; //treeDef.center.y / this.sprite.scaleY;
 	this.container.addChild(this.sprite);
 
 
@@ -83,8 +83,8 @@ Player = function () {
 
 				var p = ev.target.target.p;
 				var pi = 1 - p;
-				self.sprite.scaleX = (p * self.smallW + self.bigW * pi) / img.tag.width;
-				self.sprite.scaleY = (p * self.smallH + self.bigH * pi) / img.tag.height;
+				self.sprite.scaleX = (p * self.smallW + self.bigW * pi) / img.width;
+				self.sprite.scaleY = (p * self.smallH + self.bigH * pi) / img.height;
 
 				console.log(radius + ', ' + density);
 			});

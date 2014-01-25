@@ -52,6 +52,8 @@ function init() {
 		{ id: 'rubble/tree_a_big', src: 'imgs/rubble/tree_a_big.png' },
 		{ id: 'chara/cat', src: 'imgs/chara/mocks_cat.png' },
 		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },
+		{ id: 'chara/lion_run', src: 'imgs/chara/lion_run.png' },
+		{ id: 'chara/lion_run2', src: 'imgs/chara/lion_run2.png' },
 		{ id: 'chara/catlady', src: 'imgs/chara/mocks_main_large.png' }
 	];
 	//Add other resources to the array here
@@ -66,8 +68,9 @@ function loadingError(target, type, item, error) {
 function loadingComplete() {
 	initMenu();
 
+	//createjs.Ticker.timingMode = createjs.Ticker.RAF;
 	createjs.Ticker.setFPS(60);
-	createjs.Ticker.addEventListener("tick", function () {
+	createjs.Ticker.addEventListener("tick", function (e) {
 		gamepadStrategy.update();
 		if (GameMode == GameMode_Menu) {
 			menuTick(createjs.Ticker.getInterval() / 1000);
@@ -76,7 +79,7 @@ function loadingComplete() {
 			gameTick(createjs.Ticker.getInterval() / 1000);
 			rendererTick();
 		}
-		stage.update();
+		stage.update(e);
 	});
 }
 
@@ -89,6 +92,10 @@ function initGame() {
 	stage.addChild(LayerStage);
 	LayerForeground = new createjs.Container();
 	stage.addChild(LayerForeground);
+
+	initCatGlobals();
+
+
 
 	playerControls = new PlayerControls();
 
@@ -104,7 +111,7 @@ function initGame() {
 	catHerd = new CatHerd(cats, player);
 
 	var treeDef = {
-		img: Resources.getItem('rubble/tree_a_big'),
+		img: Resources.getResult('rubble/tree_a_big'),
 		size: new B2Vec2(503, 539).Divide(1.2),
 		center: new B2Vec2(200, 460).Divide(1.2),
 		radius: 6

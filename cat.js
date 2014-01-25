@@ -1,3 +1,26 @@
+function initCatGlobals() {
+	var img = Resources.getResult('chara/lion_run');
+
+	Cat.lionImgW = 1020 / 3;
+	Cat.lionImgH = 226;
+
+	Cat.lionRunSheet = new createjs.SpriteSheet({
+		images: [img],
+		frames: {
+			width: Cat.lionImgW,
+			height: Cat.lionImgH,
+	
+			regX: Cat.lionImgW / 2,
+			regY: Cat.lionImgH - 40,
+			count:3
+		},
+	
+		animations: {
+			run: [0, 2, 'run']
+		}
+	});
+}
+
 Cat = function (x, y) {
 
 	//consts
@@ -39,8 +62,7 @@ Cat = function (x, y) {
 	this.fixture = this.body.CreateFixture(fixDef);
 	this.body.SetPosition(new B2Vec2(x, y));
 
-	var catImg = Resources.getItem('chara/cat');
-	var lionImg = Resources.getItem('chara/lion');
+	var catImg = Resources.getResult('chara/cat');
 
 	this.catW = 100;
 	this.catH = 50;
@@ -52,19 +74,21 @@ Cat = function (x, y) {
 	this.container = new createjs.Container();
 	LayerStage.addChild(this.container);
 
-	this.catSprite = new createjs.Bitmap(catImg.tag);
-	this.catSprite.scaleX = this.catW / catImg.tag.width;
-	this.catSprite.scaleY = this.catH / catImg.tag.height;
-	this.catSprite.regX = catImg.tag.width / 2; //treeDef.center.x / this.sprite.scaleX;
-	this.catSprite.regY = catImg.tag.height; //treeDef.center.y / this.sprite.scaleY;
+
+
+	this.catSprite = new createjs.Bitmap(catImg);
+	this.catSprite.scaleX = this.catW / catImg.width;
+	this.catSprite.scaleY = this.catH / catImg.height;
+	this.catSprite.regX = catImg.width / 2;
+	this.catSprite.regY = catImg.height;
 	this.container.addChild(this.catSprite);
 
-
-	this.lionSprite = new createjs.Bitmap(lionImg.tag);
-	this.lionSprite.scaleX = this.lionW / lionImg.tag.width;
-	this.lionSprite.scaleY = this.lionH / lionImg.tag.height;
-	this.lionSprite.regX = lionImg.tag.width / 2; //treeDef.center.x / this.sprite.scaleX;
-	this.lionSprite.regY = lionImg.tag.height; //treeDef.center.y / this.sprite.scaleY;
+	this.lionSprite = new createjs.Sprite(Cat.lionRunSheet, 'run');
+	this.lionSprite.scaleX = this.catW / Cat.lionImgW;
+	this.lionSprite.scaleY = this.catH / Cat.lionImgH;
+	//this.lionSprite.regX = Cat.lionImgW / 2;
+	//this.lionSprite.regY = Cat.lionImgH;
+	this.lionSprite.framerate = 6; //TODO: Set based on speed, idle animation other wise
 	this.lionSprite.alpha = 0;
 	this.container.addChild(this.lionSprite);
 
@@ -105,11 +129,11 @@ Cat = function (x, y) {
 				self.lionSprite.alpha = pi;
 				self.catSprite.alpha = p;
 
-				self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / catImg.tag.width;
-				self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / catImg.tag.height;
+				self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / catImg.width;
+				self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / catImg.height;
 
-				self.lionSprite.scaleX = (self.catW * p + self.lionW * pi) / lionImg.tag.width;
-				self.lionSprite.scaleY = (self.catH * p + self.lionH * pi) / lionImg.tag.height;
+				self.lionSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.lionImgW;
+				self.lionSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.lionImgH;
 			});
 		self.isBig = becomeBig;
 	});
@@ -135,6 +159,15 @@ Cat.prototype = {
 		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * (Math.sign(this.forceToApply.x) || Math.sign(this.catSprite.scaleX));
 		this.lionSprite.scaleX = Math.abs(this.lionSprite.scaleX) * (Math.sign(this.forceToApply.x) || Math.sign(this.lionSprite.scaleX));
 
+		if (this.aiState && this.aiState.waiting && !this.aiState.pounced) {
+			this.lionSprite.gotoAndStop(2);
+		} else if (this.aiState && this.aiState.pounced) {
+			this.lionSprite.gotoAndStop(1);
+		} else if (this.velocity().LengthSquared() < 1) {
+			this.lionSprite.gotoAndStop(0);
+		} else if (this.lionSprite.paused) {
+			this.lionSprite.gotoAndPlay('run');
+		}
 		//this.shape.rotation = this.velocity().Angle();
 	}
 };

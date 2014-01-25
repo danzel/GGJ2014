@@ -65,8 +65,10 @@ var CatAiLion = {
 		var dist = cat.position().DistanceTo(tree.position());
 
 		if (dist > this.interestDistance / 2) {
+			cat.aiState.waiting = false;
 			cat.forceToApply = this.steeringBehaviourSeek(cat, tree.position());
 		} else {
+			cat.aiState.waiting = true;
 			cat.aiState.timeWaited += dt;
 			if (cat.aiState.timeWaited >= 1) {
 				cat.forceToApply = tree.position().Copy().Subtract(cat.position()).Multiply(cat.maxForce * 100);
