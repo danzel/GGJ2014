@@ -12,8 +12,8 @@ Cat = function (x, y) {
 	this.maxSpeed = 100;
 	this.maxSpeedSquared = this.maxSpeed * this.maxSpeed;
 
-	this.minSeparation = this.smallRadius * 4; // We'll move away from anyone nearer than this
-	this.maxCohesion = this.smallRadius * 10; //We'll move closer to anyone within this bound
+	this.minSeparation = this.smallRadius * 8; // We'll move away from anyone nearer than this
+	this.maxCohesion = this.smallRadius * 15; //We'll move closer to anyone within this bound
 
 	//vars
 	this.radius = this.smallRadius;
