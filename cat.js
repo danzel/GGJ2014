@@ -9,12 +9,12 @@ function initCatGlobals() {
 		frames: {
 			width: Cat.lionImgW,
 			height: Cat.lionImgH,
-	
+
 			regX: Cat.lionImgW / 2,
 			regY: Cat.lionImgH - 40,
-			count:3
+			count: 3
 		},
-	
+
 		animations: {
 			run: [0, 2, 'run']
 		}
@@ -94,11 +94,15 @@ Cat = function (x, y) {
 
 
 
-	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#b44').drawCircle(0, 0, 10);
-	this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
-	this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
-	this.container.addChild(this.shape);
+	//this.shape = new createjs.Shape();
+	//this.shape.graphics.beginStroke('#b44').drawCircle(0, 0, 10);
+	//this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
+	//this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
+	//this.container.addChild(this.shape);
+
+	this.shadow = Shadow.create(this.bigRadius * SIM_SCALE_X * 2, this.bigRadius * SIM_SCALE_Y * 2, 20);
+	this.shadow.scaleX = this.shadow.scaleY = this.radius / this.bigRadius;
+	this.container.addChildAt(this.shadow, 0);
 
 	var self = this;
 	Events.subscribe('player-toggle-bigness', function (becomeBig) {
@@ -117,15 +121,16 @@ Cat = function (x, y) {
 				self.body.m_fixtureList.m_shape.SetRadius(radius);
 				self.body.m_fixtureList.SetDensity(density);
 				self.body.ResetMassData();
-				self.shape.scaleX = radius * SIM_SCALE_X / 10;
-				self.shape.scaleY = radius * SIM_SCALE_Y / 10;
-
+				if (self.shape) {
+					self.shape.scaleX = radius * SIM_SCALE_X / 10;
+					self.shape.scaleY = radius * SIM_SCALE_Y / 10;
+				}
 				self.radius = radius;
 				self.minSeparation = self.radius * 4; // We'll move away from anyone nearer than this
 				self.maxCohesion = self.radius * 10; //We'll move closer to anyone within this bound
 
-				var p =ev.target.target.p;
-				var pi =1 - ev.target.target.p;
+				var p = ev.target.target.p;
+				var pi = 1 - ev.target.target.p;
 				self.lionSprite.alpha = pi;
 				self.catSprite.alpha = p;
 
@@ -134,6 +139,10 @@ Cat = function (x, y) {
 
 				self.lionSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.lionImgW;
 				self.lionSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.lionImgH;
+
+				if (self.shadow) {
+					self.shadow.scaleX = self.shadow.scaleY = radius / self.bigRadius;
+				}
 			});
 		self.isBig = becomeBig;
 	});
@@ -156,10 +165,10 @@ Cat.prototype = {
 		this.container.x = this.position().x * SIM_SCALE_X;
 		this.container.y = this.position().y * SIM_SCALE_Y;
 
-		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * (Math.sign(this.forceToApply.x) || Math.sign(this.catSprite.scaleX));
-		this.lionSprite.scaleX = Math.abs(this.lionSprite.scaleX) * (Math.sign(this.forceToApply.x) || Math.sign(this.lionSprite.scaleX));
+		var sign = Math.sign(this.forceToApply.x) || Math.sign(this.catSprite.scaleX);
 
 		if (this.aiState && this.aiState.waiting && !this.aiState.pounced) {
+			sign = this.position().x > this.aiState.target.position().x ? -1 : 1;
 			this.lionSprite.gotoAndStop(2);
 		} else if (this.aiState && this.aiState.pounced) {
 			this.lionSprite.gotoAndStop(1);
@@ -168,6 +177,9 @@ Cat.prototype = {
 		} else if (this.lionSprite.paused) {
 			this.lionSprite.gotoAndPlay('run');
 		}
+
+		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * sign;
+		this.lionSprite.scaleX = Math.abs(this.lionSprite.scaleX) * sign;
 		//this.shape.rotation = this.velocity().Angle();
 	}
 };

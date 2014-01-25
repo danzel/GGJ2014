@@ -47,7 +47,7 @@ var CatAiLion = {
 	interact: function (cat, enemy, dt) {
 
 		if (enemy instanceof Tree) {
-			cat.aiState = { handler: this.interactTree, tree: enemy, timeWaited: 0 };
+			cat.aiState = { handler: this.interactTree, target: enemy, timeWaited: 0 };
 		} else if (enemy instanceof Enemy) {
 			//TODO
 		} else {
@@ -61,7 +61,7 @@ var CatAiLion = {
 	},
 
 	interactTree: function (cat, dt) {
-		var tree = cat.aiState.tree;
+		var tree = cat.aiState.target;
 		var dist = cat.position().DistanceTo(tree.position());
 
 		if (dist > this.interestDistance / 2) {
@@ -72,6 +72,7 @@ var CatAiLion = {
 			cat.aiState.timeWaited += dt;
 			if (cat.aiState.timeWaited >= 1) {
 				cat.forceToApply = tree.position().Copy().Subtract(cat.position()).Multiply(cat.maxForce * 100);
+				//cat.forceToApply = this.steeringBehaviourSeek(cat, tree.position(), 0, dt).Multiply(cat.maxForce * 10);
 
 				cat.aiState.pounced = true;
 			}
@@ -179,6 +180,17 @@ var CatAiLion = {
 
 		//Steer towards that heading
 		return this.steerTowards(agent, averageHeading);
+	},
+
+	steeringBehaviourWander: function (agent, target, diameter, dt) {
+		if (agent.aiState._wanderTimer >= 4 || !agent.aiState._wanderPoint || B2Math.DistanceSquared(agent.position(), agent.aiState._wanderPoint) < 5 * 5) {
+			agent.aiState._wanderTimer = 0;
+			agent.aiState._wanderPoint = target.Copy().Add2((Math.random() - 0.5) * diameter, (Math.random() - 0.5) * diameter);
+		}
+
+		agent._wanderTimer += dt;
+
+		return this.steeringBehaviourSeek(agent, agent.aiState._wanderPoint).Multiply(0.2);
 	},
 
 	steerTowards: function (agent, desiredDirection) {

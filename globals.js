@@ -2,7 +2,9 @@ var stage, renderer;
 
 var LayerBackground;
 var LayerStage;
+var LayerStageOver;
 var LayerForeground;
+
 var ParalaxScroll;
 
 var world = new B2World(B2Vec2.Zero, true);
@@ -27,6 +29,7 @@ var GameMode = GameMode_Menu;
 
 var Faces = [];
 
+var parallaxScroll;
 
 Math.sign = Math.sign || function (a) { return a > 0 ? 1 : a < 0 ? -1 : 0; };
 
@@ -54,11 +57,10 @@ function init() {
 		{ id: 'chara/cat', src: 'imgs/chara/mocks_cat.png' },
 		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },
 		{ id: 'chara/lion_run', src: 'imgs/chara/lion_run.png' },
-		{ id: 'chara/lion_run2', src: 'imgs/chara/lion_run2.png' },
 		{ id: 'chara/catlady', src: 'imgs/chara/mocks_main_large.png' }
 	];
 	//Add other resources to the array here
-	resourceArray = resourceArray.concat(paralaxResources);
+	resourceArray = resourceArray.concat(parallaxResources);
 
 	Resources.loadManifest(resourceArray);
 }
@@ -68,8 +70,6 @@ function loadingError(target, type, item, error) {
 }
 
 function loadingComplete() {
-
-	ParalaxScroll = new Paralax();
 
 	initMenu();
 
@@ -82,7 +82,7 @@ function loadingComplete() {
 			menuRendererTick();
 		} else {
 			gameTick(createjs.Ticker.getInterval() / 1000);
-			rendererTick();
+			rendererTick(createjs.Ticker.getInterval() / 1000);
 		}
 		stage.update(e);
 	});
@@ -93,10 +93,20 @@ function initGame() {
 	//Layers
 	LayerBackground = new createjs.Container();
 	stage.addChild(LayerBackground);
+
+	var stageContainer = new createjs.Container();
+	stage.addChild(stageContainer);
+
 	LayerStage = new createjs.Container();
-	stage.addChild(LayerStage);
+	stageContainer.addChild(LayerStage);
+	LayerStageOver = new createjs.Container();
+	stageContainer.addChild(LayerStageOver);
+
 	LayerForeground = new createjs.Container();
 	stage.addChild(LayerForeground);
+
+	parallaxScroll = new Parallax();
+
 
 	initCatGlobals();
 
@@ -134,13 +144,12 @@ function gameTick(dt) {
 
 	world.Step(dt, 10, 10);
 	world.ClearForces();
-
 }
 
-function rendererTick() {
+function rendererTick(dt) {
 	var i;
 	player.renderUpdate();
-	ParalaxScroll.update();
+	parallaxScroll.update(dt);
 
 	for (i = cats.length - 1; i >= 0; i--) {
 		cats[i].renderUpdate();
