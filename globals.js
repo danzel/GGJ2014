@@ -1,5 +1,6 @@
 var stage, renderer;
 
+var LayerStageUnder;
 var LayerBackground;
 var LayerStage;
 var LayerStageOver;
@@ -61,6 +62,7 @@ function init() {
 	];
 	//Add other resources to the array here
 	resourceArray = resourceArray.concat(parallaxResources);
+	resourceArray = resourceArray.concat(particleResources);
 
 	Resources.loadManifest(resourceArray);
 }
@@ -97,6 +99,8 @@ function initGame() {
 	var stageContainer = new createjs.Container();
 	stage.addChild(stageContainer);
 
+	LayerStageUnder = new createjs.Container();
+	stageContainer.addChild(LayerStageUnder);
 	LayerStage = new createjs.Container();
 	stageContainer.addChild(LayerStage);
 	LayerStageOver = new createjs.Container();
@@ -106,6 +110,7 @@ function initGame() {
 	stage.addChild(LayerForeground);
 
 	parallaxScroll = new Parallax();
+	particles = new ParticleEffects();
 
 
 	initCatGlobals();
@@ -150,6 +155,7 @@ function rendererTick(dt) {
 	var i;
 	player.renderUpdate();
 	parallaxScroll.update(dt);
+	particles.update();
 
 	for (i = cats.length - 1; i >= 0; i--) {
 		cats[i].renderUpdate();
