@@ -40,19 +40,35 @@ Cat = function (x, y) {
 	this.body.SetPosition(new B2Vec2(x, y));
 
 	var catImg = Resources.getItem('chara/cat');
+	var lionImg = Resources.getItem('chara/lion');
+
+	this.catW = 100;
+	this.catH = 50;
+
+	this.lionW = 160;
+	this.lionH = 130;
 
 	//Our shape
 	this.container = new createjs.Container();
 	LayerStage.addChild(this.container);
 
-	this.scaleX = 100 / catImg.tag.width;
-
 	this.catSprite = new createjs.Bitmap(catImg.tag);
-	this.catSprite.scaleX = this.scaleX;
-	this.catSprite.scaleY = 50 / catImg.tag.height;
+	this.catSprite.scaleX = this.catW / catImg.tag.width;
+	this.catSprite.scaleY = this.catH / catImg.tag.height;
 	this.catSprite.regX = catImg.tag.width / 2; //treeDef.center.x / this.sprite.scaleX;
 	this.catSprite.regY = catImg.tag.height; //treeDef.center.y / this.sprite.scaleY;
 	this.container.addChild(this.catSprite);
+
+
+	this.lionSprite = new createjs.Bitmap(lionImg.tag);
+	this.lionSprite.scaleX = this.lionW / lionImg.tag.width;
+	this.lionSprite.scaleY = this.lionH / lionImg.tag.height;
+	this.lionSprite.regX = lionImg.tag.width / 2; //treeDef.center.x / this.sprite.scaleX;
+	this.lionSprite.regY = lionImg.tag.height; //treeDef.center.y / this.sprite.scaleY;
+	this.lionSprite.alpha = 0;
+	this.container.addChild(this.lionSprite);
+
+
 
 	this.shape = new createjs.Shape();
 	this.shape.graphics.beginStroke('#b44').drawCircle(0, 0, 10);
@@ -67,8 +83,8 @@ Cat = function (x, y) {
 		self.transforming = true;
 		self.aiState = null;
 
-		createjs.Tween.get({ radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
-			.to(becomeBig ? { radius: self.bigRadius, density: self.bigDensity } : { radius: self.smallRadius, density: self.smallDensity }, 250, createjs.Ease.circIn)
+		createjs.Tween.get({ p: becomeBig ? 1 : 0, radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
+			.to(becomeBig ? { p: 0, radius: self.bigRadius, density: self.bigDensity } : { p: 1, radius: self.smallRadius, density: self.smallDensity }, 250, createjs.Ease.circIn)
 			.call(function () {
 				self.transforming = false;
 			}).addEventListener('change', function (ev) {
@@ -84,6 +100,16 @@ Cat = function (x, y) {
 				self.minSeparation = self.radius * 4; // We'll move away from anyone nearer than this
 				self.maxCohesion = self.radius * 10; //We'll move closer to anyone within this bound
 
+				var p =ev.target.target.p;
+				var pi =1 - ev.target.target.p;
+				self.lionSprite.alpha = pi;
+				self.catSprite.alpha = p;
+
+				self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / catImg.tag.width;
+				self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / catImg.tag.height;
+
+				self.lionSprite.scaleX = (self.catW * p + self.lionW * pi) / lionImg.tag.width;
+				self.lionSprite.scaleY = (self.catH * p + self.lionH * pi) / lionImg.tag.height;
 			});
 		self.isBig = becomeBig;
 	});
@@ -107,6 +133,7 @@ Cat.prototype = {
 		this.container.y = this.position().y * SIM_SCALE_Y;
 
 		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * (Math.sign(this.velocity().x) || Math.sign(this.catSprite.scaleX));
+		this.lionSprite.scaleX = Math.abs(this.lionSprite.scaleX) * (Math.sign(this.velocity().x) || Math.sign(this.lionSprite.scaleX));
 
 		//this.shape.rotation = this.velocity().Angle();
 	}
