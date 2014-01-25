@@ -3,6 +3,7 @@ var stage, renderer;
 var LayerBackground;
 var LayerStage;
 var LayerForeground;
+
 var ParalaxScroll;
 
 var world = new B2World(B2Vec2.Zero, true);
@@ -27,6 +28,7 @@ var GameMode = GameMode_Menu;
 
 var Faces = [];
 
+var parallaxScroll;
 
 Math.sign = Math.sign || function (a) { return a > 0 ? 1 : a < 0 ? -1 : 0; };
 
@@ -57,7 +59,7 @@ function init() {
 		{ id: 'chara/catlady', src: 'imgs/chara/mocks_main_large.png' }
 	];
 	//Add other resources to the array here
-	resourceArray = resourceArray.concat(paralaxResources);
+	resourceArray = resourceArray.concat(parallaxResources);
 
 	Resources.loadManifest(resourceArray);
 }
@@ -95,7 +97,7 @@ function initGame() {
 	LayerForeground = new createjs.Container();
 	stage.addChild(LayerForeground);
 
-	ParalaxScroll = new Paralax();
+	parallaxScroll = new Parallax();
 
 
 	initCatGlobals();
@@ -134,13 +136,12 @@ function gameTick(dt) {
 
 	world.Step(dt, 10, 10);
 	world.ClearForces();
-
 }
 
 function rendererTick(dt) {
 	var i;
 	player.renderUpdate();
-	ParalaxScroll.update(dt);
+	parallaxScroll.update(dt);
 
 	for (i = cats.length - 1; i >= 0; i--) {
 		cats[i].renderUpdate();
