@@ -92,6 +92,8 @@ function loadingComplete() {
 function initGame() {
 
 	world.SetContactListener(new ContactListener());
+	createWalls();
+
 	//Layers
 	LayerBackground = new createjs.Container();
 	stage.addChild(LayerBackground);
@@ -115,13 +117,13 @@ function initGame() {
 	playerControls = new PlayerControls();
 
 	player = new Player();
-	cats.push(new Cat(1, 1));
-	cats.push(new Cat(1, 2));
-	cats.push(new Cat(1, 3));
-	cats.push(new Cat(2, 1));
-	cats.push(new Cat(2, 2));
-	cats.push(new Cat(2, 3));
-	cats.push(new Cat(3, 1));
+	cats.push(new Cat(05, 45));
+	cats.push(new Cat(05, 50));
+	cats.push(new Cat(05, 55));
+	cats.push(new Cat(10, 45));
+	cats.push(new Cat(10, 50));
+	cats.push(new Cat(10, 55));
+	cats.push(new Cat(15, 45));
 
 	catHerd = new CatHerd(cats, player);
 
@@ -144,6 +146,39 @@ function initGame() {
 	enemies.push(new Tree(treeDef, 90, 80));
 	enemies.push(new Enemy(enemyDef, 90, 120));
 	//enemies.push(new Enemy(100, 40));
+}
+
+function createWalls() {
+
+	var screenHeight = 720 / SIM_SCALE_Y;
+
+	//Create a physics body
+	var fixDef = new B2FixtureDef();
+	var bodyDef = new B2BodyDef();
+	bodyDef.type = B2Body.b2_staticBody;
+
+
+	//Left wall
+	fixDef.shape = B2PolygonShape.AsBox(1, screenHeight / 2);
+	var body = world.CreateBody(bodyDef);
+	body.CreateFixture(fixDef);
+	body.SetPosition(new B2Vec2(-1, screenHeight / 2));
+
+	for (var i = 1; i <= 10; i++) {
+		//bottom wall
+		fixDef.shape = B2PolygonShape.AsBox(100, 1);
+		body = world.CreateBody(bodyDef);
+		body.CreateFixture(fixDef);
+		body.SetPosition(new B2Vec2(100 * i, screenHeight + 2));
+
+
+		//top wall
+		fixDef.shape = B2PolygonShape.AsBox(100, 1);
+		body = world.CreateBody(bodyDef);
+		body.CreateFixture(fixDef);
+		body.SetPosition(new B2Vec2(100 * i, 40));
+	}
+
 }
 
 function gameTick(dt) {

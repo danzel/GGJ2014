@@ -36,6 +36,9 @@ Parallax = function () {
 
 		var midX = (minX + maxX) / 2;
 
+		if (midX < 1280 / 2 / SIM_SCALE_X)
+			midX = 1280 / 2/ SIM_SCALE_X;
+
 		var bgDesired = -midX * bgScale * SIM_SCALE_X + 1280 / 2;
 		LayerBackground.x = LayerBackground.x * 0.98 + bgDesired * 0.02;
 
