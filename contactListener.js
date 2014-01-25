@@ -1,6 +1,7 @@
 ContactListener = function () {
 	Events.create('collision-cat-enemy');
 	Events.create('collision-cat-tree');
+	Events.create('collision-cat-player');
 	Events.create('collision-player-enemy');
 };
 ContactListener.prototype = {
@@ -96,6 +97,25 @@ ContactListener.prototype = {
 
 			return;
 		}
+
+
+		if ((aType == 'cat' && bType == 'player') ||
+			(aType == 'player' && bType == 'cat')) {
+
+			cat = aType == 'cat' ? a : b;
+
+			Events.publish('collision-cat-player', this.getCollisionPoint(contact), cat, player);
+
+			if (cat.isBig) {
+				player.takesDamage++;
+			} else {
+				player.takesDamage--; //HEALZ
+			}
+
+			return;
+		}
+
+
 
 		//console.log('begin', contact);
 	},

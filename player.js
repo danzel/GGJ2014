@@ -42,7 +42,7 @@ Player = function () {
 	this.laserPositionOrig = B2Vec2.Zero;
 	this.laserPosition = new B2Vec2(50, 50);
 
-	this.health = this.maxHealth;
+	this.health = this.maxHealth / 2;
 	this.takesDamage = 0;
 
 	//Create a physics body
@@ -163,6 +163,10 @@ Player.prototype = {
 		if (this.takesDamage) {
 			this.health -= this.takesDamage * (this.isBig ? 1 : 2);
 			this.takesDamage = 0;
+
+			if (this.health > this.maxHealth) {
+				this.health = this.maxHealth;
+			}
 		}
 		this.dealtDamage = false;
 	},
