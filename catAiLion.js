@@ -47,7 +47,7 @@ var CatAiLion = {
 	interact: function (cat, enemy, dt) {
 
 		if (enemy instanceof Tree) {
-			cat.aiState = { handler: this.interactTree, tree: enemy, timeWaited: 0 };
+			cat.aiState = { handler: this.interactTree, target: enemy, timeWaited: 0 };
 		} else if (enemy instanceof Enemy) {
 			//TODO
 		} else {
@@ -61,7 +61,7 @@ var CatAiLion = {
 	},
 
 	interactTree: function (cat, dt) {
-		var tree = cat.aiState.tree;
+		var tree = cat.aiState.target;
 		var dist = cat.position().DistanceTo(tree.position());
 
 		if (dist > this.interestDistance / 2) {

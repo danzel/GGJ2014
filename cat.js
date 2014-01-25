@@ -165,10 +165,10 @@ Cat.prototype = {
 		this.container.x = this.position().x * SIM_SCALE_X;
 		this.container.y = this.position().y * SIM_SCALE_Y;
 
-		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * (Math.sign(this.forceToApply.x) || Math.sign(this.catSprite.scaleX));
-		this.lionSprite.scaleX = Math.abs(this.lionSprite.scaleX) * (Math.sign(this.forceToApply.x) || Math.sign(this.lionSprite.scaleX));
+		var sign = Math.sign(this.forceToApply.x) || Math.sign(this.catSprite.scaleX);
 
 		if (this.aiState && this.aiState.waiting && !this.aiState.pounced) {
+			sign = this.position().x > this.aiState.target.position().x ? -1 : 1;
 			this.lionSprite.gotoAndStop(2);
 		} else if (this.aiState && this.aiState.pounced) {
 			this.lionSprite.gotoAndStop(1);
@@ -177,6 +177,9 @@ Cat.prototype = {
 		} else if (this.lionSprite.paused) {
 			this.lionSprite.gotoAndPlay('run');
 		}
+
+		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * sign;
+		this.lionSprite.scaleX = Math.abs(this.lionSprite.scaleX) * sign;
 		//this.shape.rotation = this.velocity().Angle();
 	}
 };
