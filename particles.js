@@ -74,8 +74,8 @@ var ParticleEffect = function(config){
 		if (this.proton) {
 			this.proton.update();
 			for (key in emitters) {
-				emitters[key].p.x = emitters[key].attachedTo.position().x;
-				emitters[key].p.y = emitters[key].attachedTo.position().y;
+				emitters[key].p.x = emitters[key].attachedTo.position().x * SIM_SCALE_X;
+				emitters[key].p.y = emitters[key].attachedTo.position().y * SIM_SCALE_Y;
 			}
 		}
 	};
