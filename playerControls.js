@@ -4,36 +4,70 @@ PlayerControls = function () {
 	Events.create('player-movement-direction');
 	Events.create('player-laser-target-move');
 
-	this.laserOffset = new B2Vec2();
+	this.laserPosition = new B2Vec2();
 	this.movementDirection = new B2Vec2();
 
 	var self = this;
-	//Shoulder toggle
-	gamepad.bind(Gamepad.Event.BUTTON_DOWN, function (e) {
-		if (e.control == 'RIGHT_TOP_SHOULDER') {
+
+	//http://robertwhurst.github.io/KeyboardJS/
+
+	var left, right, up, down;
+
+	function updateMove() {
+		self.movementDirection.x = left ? -1 : right ? 1 : 0;
+		self.movementDirection.y = up ? -1 : down ? 1 : 0;
+
+		Events.publish('player-movement-direction', self.movementDirection);
+	}
+
+	KeyboardJS.on('w,up', function () {
+		up = true;
+		updateMove();
+	}, function () {
+		up = false;
+		updateMove();
+	});
+
+	KeyboardJS.on('s,down', function () {
+		down = true;
+		updateMove();
+	}, function () {
+		down = false;
+		updateMove();
+	});
+
+	KeyboardJS.on('a,left', function () {
+		left = true;
+		updateMove();
+	}, function () {
+		left = false;
+		updateMove();
+	});
+	KeyboardJS.on('d,right', function () {
+		right = true;
+		updateMove();
+	}, function () {
+		right = false;
+		updateMove();
+	});
+
+	KeyboardJS.on('spacebar', function () {
+		if (powerMeter.isReady()) {
 			Events.publish('player-toggle-bigness', !player.isBig);
 		}
 	});
 
-	gamepad.bind(Gamepad.Event.AXIS_CHANGED, function (e) {
-		//Right stick move laser
-		if (e.axis === 'RIGHT_STICK_X') {
-			self.laserOffset.x = player.laserRange * e.value;
-			Events.publish('player-laser-target-move', self.laserOffset);
-		} else if (e.axis === 'RIGHT_STICK_Y') {
-			self.laserOffset.y = player.laserRange * e.value;
-			Events.publish('player-laser-target-move', self.laserOffset);
-		}
-		//TODO: Left stick move player
 
-		if (e.axis === 'LEFT_STICK_X') {
-			self.movementDirection.x = e.value;
-			Events.publish('player-movement-direction', self.movementDirection);
-		} else if (e.axis === 'LEFT_STICK_Y') {
-			self.movementDirection.y = e.value;
-			Events.publish('player-movement-direction', self.movementDirection);
-		}
+	mouse.on('move', function (e) {
+
+		//todo: scroll care
+		self.laserPosition.x = this.x / SIM_SCALE_X;
+		self.laserPosition.y = this.y / SIM_SCALE_Y;
+
+		//console.log(self.laserPosition);
+		Events.publish('player-laser-target-move', self.laserPosition);
 	});
+	return;
 };
 PlayerControls.prototype = {
 	update: function (dt) {

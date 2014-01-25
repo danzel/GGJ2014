@@ -1,55 +1,125 @@
 ContactListener = function () {
 	Events.create('collision-cat-enemy');
 	Events.create('collision-cat-tree');
+	Events.create('collision-cat-player');
 	Events.create('collision-player-enemy');
 };
 ContactListener.prototype = {
-	BeginContact: function (contact) {
+
+	identify: function (fix) {
+		var ud = fix.userData;
+
+		if (ud instanceof Cat)
+			return 'cat';
+		if (ud instanceof Enemy)
+			return 'enemy';
+		if (ud instanceof Player)
+			return 'player';
+		if (ud instanceof Tree)
+			return 'tree';
+
+		return 'unknown';
+	},
+
+	getCollisionPoint: function (contact) {
+
+		var a = contact.GetFixtureA().userData;
+		var b = contact.GetFixtureB().userData;
+
+		var radiusTotal = a.radius + b.radius;
+		var aP = a.radius / radiusTotal;
+		var bP = b.radius / radiusTotal;
+
+		var x = a.position().x * aP + b.position().x * bP;
+		var y = a.position().y * aP + b.position().y * bP;
+		return new B2Vec2(x, y);
+	},
+
+	PreSolve: function (contact, oldManifold) {
+
+		if ((contact.m_flags & B2Contact.e_touchingFlag) == 0) {
+			return;
+		}
+
 		//cat on cat
 		if ((contact.GetFixtureA().userData instanceof Cat) && (contact.GetFixtureB().userData instanceof Cat)) {
 			return;
 		}
 
-		//Cat vs (enemy or tree) or Player vs Enemy
-		if (
-			((contact.GetFixtureA().userData instanceof Cat) && (contact.GetFixtureB().userData instanceof Enemy)) ||
-			((contact.GetFixtureA().userData instanceof Enemy) && (contact.GetFixtureB().userData instanceof Cat)) ||
-			((contact.GetFixtureA().userData instanceof Cat) && (contact.GetFixtureB().userData instanceof Tree)) ||
-			((contact.GetFixtureA().userData instanceof Tree) && (contact.GetFixtureB().userData instanceof Cat)) ||
-			((contact.GetFixtureA().userData instanceof Player) && (contact.GetFixtureB().userData instanceof Enemy)) ||
-			((contact.GetFixtureA().userData instanceof Enemy) && (contact.GetFixtureB().userData instanceof Player))
-			) {
-			var cat, enemy;
-			if ((contact.GetFixtureA().userData instanceof Cat) || (contact.GetFixtureA().userData instanceof Player)) {
-				cat = contact.GetFixtureA().userData;
-				enemy = contact.GetFixtureB().userData;
-			} else {
-				cat = contact.GetFixtureA().userData;
-				enemy = contact.GetFixtureB().userData;
-			}
+		var a = contact.GetFixtureA().userData;
+		var b = contact.GetFixtureB().userData;
 
-			//World manifold is fucked in this box 2d, calculate collision point my fucking self.
+		var aType = this.identify(contact.GetFixtureA());
+		var bType = this.identify(contact.GetFixtureB());
 
-			var radiusTotal = cat.radius + enemy.radius;
-			var catP = cat.radius / radiusTotal;
-			var enemyP = enemy.radius / radiusTotal;
+		var cat, enemy, tree;
 
-			var x = cat.position().x * catP + enemy.position().x * enemyP;
-			var y = cat.position().y * catP + enemy.position().y * enemyP;
+		if ((aType == 'cat' && bType == 'enemy') ||
+			(aType == 'enemy' && bType == 'cat')) {
 
-			var catIs = (contact.GetFixtureA().userData instanceof Cat) ? 'cat' : 'player';
-			var enemyIs = (contact.GetFixtureA().userData instanceof Enemy) ? 'enemy' : 'tree';
-			Events.publish('collision-' + catIs + '-' + enemyIs, new B2Vec2(x, y), cat, enemy);
+			cat = aType == 'cat' ? a : b;
+			enemy = aType == 'enemy' ? a : b;
 
-			cat.takesDamage = true;
-			enemy.takesDamage = true;
+			Events.publish('collision-cat-enemy', this.getCollisionPoint(contact), cat, enemy);
+
+			cat.takesDamage += (!enemy.dealtDamage) ? 1 : 0;
+			enemy.takesDamage += (!cat.dealtDamage) ? 1 : 0;
+
+			enemy.dealtDamage = true;
+			cat.dealtDamage = true;
+			return;
+		}
+
+		if ((aType == 'player' && bType == 'enemy') ||
+			(aType == 'enemy' && bType == 'player')) {
+
+			enemy = aType == 'enemy' ? a : b;
+
+			Events.publish('collision-player-enemy', this.getCollisionPoint(contact), player, enemy);
+
+			player.takesDamage += (!enemy.dealtDamage) ? 1 : 0;
+			//enemy.takesDamage = true;
+
+			enemy.dealtDamage = true;
+			return;
+		}
+
+		if ((aType == 'cat' && bType == 'tree') ||
+			(aType == 'tree' && bType == 'cat')) {
+
+			cat = aType == 'cat' ? a : b;
+			tree = aType == 'tree' ? a : b;
+
+			Events.publish('collision-cat-tree', this.getCollisionPoint(contact), cat, tree);
+
+			//cat.takesDamage = true;
+			//enemy.takesDamage = true;
 
 			return;
 		}
 
+
+		if ((aType == 'cat' && bType == 'player') ||
+			(aType == 'player' && bType == 'cat')) {
+
+			cat = aType == 'cat' ? a : b;
+
+			Events.publish('collision-cat-player', this.getCollisionPoint(contact), cat, player);
+
+			if (cat.isBig) {
+				player.takesDamage++;
+			} else {
+				player.takesDamage--; //HEALZ
+			}
+
+			return;
+		}
+
+
+
 		//console.log('begin', contact);
 	},
 	EndContact: function (contact) { },
-	PreSolve: function (contact, oldManifold) { },
+	BeginContact: function (contact) { },
 	PostSolve: function (contact, impulse) { }
 };

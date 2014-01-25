@@ -34,6 +34,13 @@ Parallax = function () {
 			//TODO: Ignore cats too far from the player
 		}
 
+		var maxDiff = 10;
+
+		if (maxX > player.position().x + maxDiff)
+			maxX = player.position().x + maxDiff;
+		if (minX < player.position().x - maxDiff)
+			minX = player.position().x - maxDiff;
+
 		var midX = (minX + maxX) / 2;
 
 		if (midX < 1280 / 2 / SIM_SCALE_X)

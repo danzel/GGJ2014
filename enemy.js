@@ -1,11 +1,17 @@
 Enemy = function (def, x, y) {
+	var self = this;
 
 	this.def = def;
+
+	this.maxHealth = def.maxHealth;
 
 	//vars
 	this.radius = def.radiusSmall;
 	this.density = def.densitySmall;
 	this.isBig = false;
+	this.health = this.maxHealth;
+
+	this.takesDamage = 0;
 
 	//Create a physics body
 	var fixDef = new B2FixtureDef();
@@ -28,14 +34,24 @@ Enemy = function (def, x, y) {
 
 
 	//Our shape
+	this.container = new createjs.Container();
+	LayerStage.addChild(this.container);
+
 	this.shape = new createjs.Shape();
 	this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10);
 	this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
 	this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
+	this.container.addChild(this.shape);
 
-	LayerStage.addChild(this.shape);
+	this.healthBar = new Bar(-15, -50, 30, 6, this.maxHealth, function () {
+		var p = 1 - self.health / self.maxHealth;
+		//green - red
+		return 'hsl(' + ((120 - p * 120) | 0) + ',80%, 60%)';
+	});
+	this.healthBar.update(this.health);
+	this.container.addChild(this.healthBar.shape);
 
-	var self = this;
+
 	Events.subscribe('player-toggle-bigness', function (becomeBig) {
 		becomeBig = !becomeBig;
 		self.isBig = becomeBig;
@@ -87,8 +103,17 @@ Enemy.prototype = {
 		return this.body.GetLinearVelocity();
 	},
 
+	isDead: function () {
+		return this.health <= 0;
+	},
+
 	updateDamage: function () {
 		//TODO
+		if (this.takesDamage) {
+			this.health -= this.takesDamage;
+			this.takesDamage = 0;
+		}
+		this.dealtDamage = false;
 	},
 
 	update: function (dt) {
@@ -96,9 +121,12 @@ Enemy.prototype = {
 	},
 
 	renderUpdate: function () {
-		this.shape.x = this.position().x * SIM_SCALE_X;
-		this.shape.y = this.position().y * SIM_SCALE_Y;
+		this.container.x = this.position().x * SIM_SCALE_X;
+		this.container.y = this.position().y * SIM_SCALE_Y;
 
 		//this.shape.rotation = this.velocity().Angle();
+
+		this.healthBar.update(this.health);
+		this.healthBar.shape.alpha = (this.health < this.maxHealth && this.health > 0) ? 1 : 0;
 	}
 };

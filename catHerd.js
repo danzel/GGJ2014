@@ -8,8 +8,11 @@ CatHerd.prototype = {
 		var i, agent;
 		for (i = this.cats.length - 1; i >= 0; i--) {
 			agent = this.cats[i];
-
-			if (agent.transforming) {
+			
+			if (agent.isDead()) {
+				//nothing :(((((((
+				agent.forceToApply = B2Vec2.Zero;
+			} else if (agent.transforming) {
 				CatAiTransforming.preUpdate(dt, agent, this.cats, this.owner);
 			} else if (agent.isBig) {
 				CatAiLion.preUpdate(dt, agent, this.cats, this.owner);

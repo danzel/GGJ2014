@@ -5,6 +5,7 @@ var LayerBackground;
 var LayerStage;
 var LayerStageOver;
 var LayerForeground;
+var LayerStaticOverlay;
 
 var ParalaxScroll;
 
@@ -15,6 +16,7 @@ var SIM_SCALE_Y = 5;
 
 var player;
 var playerControls;
+var powerMeter;
 
 var cats = [];
 var catHerd;
@@ -23,6 +25,7 @@ var enemies = [];
 
 var Events = new EventBroker();
 var Resources;
+var particles;
 
 var GameMode_Menu = 1;
 var GameMode_Game = 2;
@@ -35,16 +38,6 @@ var parallaxScroll;
 Math.sign = Math.sign || function (a) { return a > 0 ? 1 : a < 0 ? -1 : 0; };
 
 function init() {
-	gamepadStrategy = new Gamepad.UpdateStrategies.ManualUpdateStrategy();
-	gamepad = new Gamepad(gamepadStrategy);
-	gamepad.deadzone = 0.1;
-	if (!gamepad.init()) {
-		console.log('fail at gamepad');
-	}
-	gamepad.bind(Gamepad.Event.CONNECTED, function (device) {
-		gamepads.push(device);
-	});
-
 	stage = new createjs.Stage('canvas');
 	createjs.DisplayObject.suppressCrossDomainErrors = true;
 
@@ -55,11 +48,11 @@ function init() {
 
 	var resourceArray = [
 		{ id: 'rubble/tree_a_big', src: 'imgs/rubble/tree_a_big.png' },
-		{ id: 'chara/cat', src: 'imgs/chara/mocks_cat.png' },
+		{ id: 'chara/cat', src: 'imgs/chara/cat_run.png' },
 		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },
 		{ id: 'chara/lion_run', src: 'imgs/chara/lion_run.png' },
 		{ id: 'chara/doge_run', src: 'imgs/chara/doge_lion_run.png' },
-		{ id: 'chara/catlady', src: 'imgs/chara/mocks_main_large.png' }
+		{ id: 'chara/catlady', src: 'imgs/chara/main_walk.png' }
 	];
 	//Add other resources to the array here
 	resourceArray = resourceArray.concat(parallaxResources);
@@ -79,7 +72,6 @@ function loadingComplete() {
 	//createjs.Ticker.timingMode = createjs.Ticker.RAF;
 	createjs.Ticker.setFPS(60);
 	createjs.Ticker.addEventListener("tick", function (e) {
-		gamepadStrategy.update();
 		if (GameMode == GameMode_Menu) {
 			menuTick(createjs.Ticker.getInterval() / 1000);
 			menuRendererTick();
@@ -113,10 +105,14 @@ function initGame() {
 	LayerForeground = new createjs.Container();
 	stage.addChild(LayerForeground);
 
+	LayerStaticOverlay = new createjs.Container();
+	stage.addChild(LayerStaticOverlay);
+
 	parallaxScroll = new Parallax();
 
 
 	initCatGlobals();
+	initPlayerGlobals();
 
 	playerControls = new PlayerControls();
 
@@ -130,6 +126,8 @@ function initGame() {
 	cats.push(new Cat(15, 45));
 
 	catHerd = new CatHerd(cats, player);
+
+	powerMeter = new PowerMeter();
 
 	var treeDef = {
 		img: Resources.getResult('rubble/tree_a_big'),
@@ -145,6 +143,8 @@ function initGame() {
 
 		densitySmall: 0.2,
 		densityBig: 0.05,
+
+		maxHealth: 300
 	};
 
 	enemies.push(new Tree(treeDef, 90, 80));
@@ -199,6 +199,8 @@ function gameTick(dt) {
 	world.Step(dt, 10, 10);
 	world.ClearForces();
 
+	player.updateDamage();
+
 	var i;
 
 	for (i = cats.length - 1; i >= 0; i--) {
@@ -208,6 +210,8 @@ function gameTick(dt) {
 	for (i = enemies.length - 1; i >= 0; i--) {
 		enemies[i].updateDamage();
 	}
+
+	powerMeter.update(dt);
 }
 
 function rendererTick(dt) {

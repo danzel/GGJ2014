@@ -19,9 +19,33 @@ function initCatGlobals() {
 			run: [0, 2, 'run']
 		}
 	});
+
+	img = Resources.getResult('chara/cat');
+
+	Cat.catImgW = 155;
+	Cat.catImgH = 120;
+
+	Cat.catRunSheet = new createjs.SpriteSheet({
+		images: [img],
+		frames: {
+			width: Cat.catImgW,
+			height: Cat.catImgH,
+			
+			regX: Cat.catImgW / 2,
+			regY: Cat.catImgH - 10,
+			count: 5
+		},
+
+		animations: {
+			run: [0, 3, 'run'],
+			die: [4, 4, 'die']
+		}
+	});
 }
 
 Cat = function (x, y) {
+	var self = this;
+
 
 	//consts
 	this.smallDensity = 0.5;
@@ -38,11 +62,14 @@ Cat = function (x, y) {
 	this.minSeparation = this.smallRadius * 8; // We'll move away from anyone nearer than this
 	this.maxCohesion = this.smallRadius * 15; //We'll move closer to anyone within this bound
 
+	this.maxHealth = 100;
+
 	//vars
 	this.radius = this.smallRadius;
 	this.isBig = false;
+	this.health = this.maxHealth;
 
-
+	this.takesDamage = 0;
 
 	//Create a physics body
 	var fixDef = new B2FixtureDef();
@@ -65,8 +92,8 @@ Cat = function (x, y) {
 
 	var catImg = Resources.getResult('chara/cat');
 
-	this.catW = 100;
-	this.catH = 50;
+	this.catW = Cat.catImgW / 2;
+	this.catH = Cat.catImgH / 2;
 
 	this.lionW = 160;
 	this.lionH = 130;
@@ -77,23 +104,26 @@ Cat = function (x, y) {
 
 
 
-	this.catSprite = new createjs.Bitmap(catImg);
-	this.catSprite.scaleX = this.catW / catImg.width;
-	this.catSprite.scaleY = this.catH / catImg.height;
-	this.catSprite.regX = catImg.width / 2;
-	this.catSprite.regY = catImg.height;
+	this.catSprite = new createjs.Sprite(Cat.catRunSheet, 'run');
+	this.catSprite.scaleX = this.catW / Cat.catImgW;
+	this.catSprite.scaleY = this.catH / Cat.catImgH;
+	this.catSprite.framerate = 6; //TODO: Set based on speed, idle animation other wise
 	this.container.addChild(this.catSprite);
 
 	this.lionSprite = new createjs.Sprite(Cat.lionRunSheet, 'run');
 	this.lionSprite.scaleX = this.catW / Cat.lionImgW;
 	this.lionSprite.scaleY = this.catH / Cat.lionImgH;
-	//this.lionSprite.regX = Cat.lionImgW / 2;
-	//this.lionSprite.regY = Cat.lionImgH;
 	this.lionSprite.framerate = 6; //TODO: Set based on speed, idle animation other wise
 	this.lionSprite.alpha = 0;
 	this.container.addChild(this.lionSprite);
 
-
+	this.healthBar = new Bar(-15, -50, 30, 6, this.maxHealth, function () {
+		var p = 1 - self.health / self.maxHealth;
+		//green - red
+		return 'hsl(' + ((120 - p * 120) | 0) + ',80%, 60%)';
+	});
+	this.healthBar.update(this.health);
+	this.container.addChild(this.healthBar.shape);
 
 	//this.shape = new createjs.Shape();
 	//this.shape.graphics.beginStroke('#b44').drawCircle(0, 0, 10);
@@ -105,7 +135,6 @@ Cat = function (x, y) {
 	this.shadow.scaleX = this.shadow.scaleY = this.radius / this.bigRadius;
 	this.container.addChildAt(this.shadow, 0);
 
-	var self = this;
 	Events.subscribe('player-toggle-bigness', function (becomeBig) {
 		becomeBig = !becomeBig;
 		self.isBig = becomeBig;
@@ -135,8 +164,8 @@ Cat = function (x, y) {
 				self.lionSprite.alpha = pi;
 				self.catSprite.alpha = p;
 
-				self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / catImg.width;
-				self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / catImg.height;
+				self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.catImgW;
+				self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.catImgH;
 
 				self.lionSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.lionImgW;
 				self.lionSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.lionImgH;
@@ -144,6 +173,9 @@ Cat = function (x, y) {
 				if (self.shadow) {
 					self.shadow.scaleX = self.shadow.scaleY = radius / self.bigRadius;
 				}
+
+				self.healthBar.shape.y = -50 - 20 * pi;
+
 			});
 		self.isBig = becomeBig;
 	});
@@ -158,11 +190,16 @@ Cat.prototype = {
 		return this.body.GetLinearVelocity();
 	},
 
+	isDead: function () {
+		return this.health <= 0;
+	},
+
 	updateDamage: function () {
 		if (this.takesDamage) {
-			this.health -= this.isBig ? 1 : 2;
-			this.takesDamage = false;
+			this.health -= this.takesDamage * (this.isBig ? 1 : 2);
+			this.takesDamage = 0;
 		}
+		this.dealtDamage = false;
 	},
 
 	update: function (dt) {
@@ -189,5 +226,8 @@ Cat.prototype = {
 		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * sign;
 		this.lionSprite.scaleX = Math.abs(this.lionSprite.scaleX) * sign;
 		//this.shape.rotation = this.velocity().Angle();
+
+		this.healthBar.update(this.health);
+		this.healthBar.shape.alpha = (this.health < this.maxHealth && this.health > 0) ? 1 : 0;
 	}
 };

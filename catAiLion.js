@@ -25,6 +25,13 @@ var CatAiLion = {
 				}
 			}
 
+			var playerDistSqrd = B2Math.DistanceSquared(player.position(), cat.position());
+			if (playerDistSqrd < closestDist) {
+				//TODO: cast a ray?
+				closestDist = playerDistSqrd;
+				closest = player;
+			}
+
 			if (closest) {
 				this.interact(cat, closest, dt);
 			}
@@ -35,7 +42,7 @@ var CatAiLion = {
 		return;
 
 		//Work out our behaviours
-		var seek = this.steeringBehaviourSeek(cat, this.owner.targetPosition);
+		var seek = this.steeringBehaviourSeek(cat, this.owner.laserPosition);
 		var sep = this.steeringBehaviourSeparation(cat);
 		var alg = this.steeringBehaviourAlignment(cat);
 		var coh = this.steeringBehaviourCohesion(cat);
@@ -52,10 +59,8 @@ var CatAiLion = {
 
 	interact: function (cat, enemy, dt) {
 
-		if ((enemy instanceof Tree) || (enemy instanceof Enemy)) {
+		if ((enemy instanceof Tree) || (enemy instanceof Enemy) || (enemy instanceof Player)) {
 			cat.aiState = { handler: this.interactTree, target: enemy, timeWaited: 0 };
-		} else if (enemy instanceof Enemy) {
-			//TODO
 		} else {
 			console.log('lions dunno what to do with:');
 			console.log(enemy);
