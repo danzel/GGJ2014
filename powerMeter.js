@@ -5,6 +5,7 @@ PowerMeter = function () {
 	this.bar = new Bar(0, 0, 400, 30, PowerMeter.max, this.colorFn);
 
 	this.container = new createjs.Container();
+	this.container.x = (1280 - 400) / 2;
 	LayerStaticOverlay.addChild(this.container);
 
 	this.container.addChild(this.bar.shape);
