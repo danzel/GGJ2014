@@ -169,6 +169,10 @@ Cat.prototype = {
 		return this.body.GetLinearVelocity();
 	},
 
+	isDead: function () {
+		return this.health > 0;
+	},
+
 	updateDamage: function () {
 		if (this.takesDamage) {
 			this.health -= this.takesDamage * (this.isBig ? 1 : 2);

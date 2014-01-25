@@ -103,6 +103,10 @@ Enemy.prototype = {
 		return this.body.GetLinearVelocity();
 	},
 
+	isDead: function () {
+		return this.health > 0;
+	},
+
 	updateDamage: function () {
 		//TODO
 		if (this.takesDamage) {
