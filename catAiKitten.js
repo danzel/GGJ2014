@@ -5,7 +5,7 @@ var CatAiKitten = {
 		this.owner = player;
 
 		//Work out our behaviours
-		var seek = this.steeringBehaviourSeek(cat, this.owner.targetPosition);
+		var seek = this.steeringBehaviourSeekMaybe(cat, this.owner.targetPosition, dt);
 		var sep = this.steeringBehaviourSeparation(cat);
 		var alg = this.steeringBehaviourAlignment(cat);
 		var coh = this.steeringBehaviourCohesion(cat);
@@ -17,6 +17,15 @@ var CatAiKitten = {
 		var lengthSquared = cat.forceToApply.LengthSquared();
 		if (lengthSquared > cat.maxForceSquared) {
 			cat.forceToApply.Multiply(cat.maxForce / Math.sqrt(lengthSquared));
+		}
+	},
+
+	steeringBehaviourSeekMaybe: function (agent, dest, dt) {
+
+		if (B2Math.DistanceSquared(agent.position(), dest) < 40 * 40) {
+			return this.steeringBehaviourSeek(agent, dest);
+		} else {
+			return this.steeringBehaviourWander(agent, dt);
 		}
 	},
 
@@ -121,6 +130,17 @@ var CatAiKitten = {
 
 		//Steer towards that heading
 		return this.steerTowards(agent, averageHeading);
+	},
+
+	steeringBehaviourWander: function (agent, dt) {
+		if (agent._wanderTimer >= 4 || !agent._wanderPoint || B2Math.DistanceSquared(agent.position(), agent._wanderPoint) < 5 * 5) {
+			agent._wanderTimer = 0;
+			agent._wanderPoint = player.position().Copy().Add2((Math.random() - 0.5) * 50, (Math.random() - 0.5) * 50);
+		}
+
+		agent._wanderTimer += dt;
+
+		return this.steeringBehaviourSeek(agent, agent._wanderPoint).Multiply(0.2);
 	},
 
 	steerTowards: function (agent, desiredDirection) {

@@ -21,6 +21,13 @@ var enemies = [];
 var Events = new EventBroker();
 var Resources;
 
+var GameMode_Menu = 1;
+var GameMode_Game = 2;
+var GameMode = GameMode_Menu;
+
+var Faces = [];
+
+
 Math.sign = Math.sign || function (a) { return a > 0 ? 1 : a < 0 ? -1 : 0; };
 
 function init() {
@@ -37,22 +44,17 @@ function init() {
 	stage = new createjs.Stage('canvas');
 	createjs.DisplayObject.suppressCrossDomainErrors = true;
 
-	//Layers
-	LayerBackground = new createjs.Container();
-	stage.addChild(LayerBackground);
-	LayerStage = new createjs.Container();
-	stage.addChild(LayerStage);
-	LayerForeground = new createjs.Container();
-	stage.addChild(LayerForeground);
-
 	Resources = new createjs.LoadQueue(false);
 	Resources.installPlugin(createjs.Sound);
 	Resources.on('complete', loadingComplete);
+	Resources.on('error', loadingError);
 
 	var resourceArray = [
 		{ id: 'rubble/tree_a_big', src: 'imgs/rubble/tree_a_big.png' },
 		{ id: 'chara/cat', src: 'imgs/chara/mocks_cat.png' },
 		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },
+		{ id: 'chara/lion_run', src: 'imgs/chara/lion_run.png' },
+		{ id: 'chara/lion_run2', src: 'imgs/chara/lion_run2.png' },
 		{ id: 'chara/catlady', src: 'imgs/chara/mocks_main_large.png' }
 	];
 	//Add other resources to the array here
@@ -61,9 +63,45 @@ function init() {
 	Resources.loadManifest(resourceArray);
 }
 
+function loadingError(target, type, item, error) {
+	console.log('loading error: ' + target + ' ' + type + ' ' + item + ' ' + error);
+}
 
 function loadingComplete() {
+<<<<<<< HEAD
 	ParalaxScroll = new Paralax();
+=======
+	initMenu();
+
+	//createjs.Ticker.timingMode = createjs.Ticker.RAF;
+	createjs.Ticker.setFPS(60);
+	createjs.Ticker.addEventListener("tick", function (e) {
+		gamepadStrategy.update();
+		if (GameMode == GameMode_Menu) {
+			menuTick(createjs.Ticker.getInterval() / 1000);
+			menuRendererTick();
+		} else {
+			gameTick(createjs.Ticker.getInterval() / 1000);
+			rendererTick();
+		}
+		stage.update(e);
+	});
+}
+
+function initGame() {
+
+	//Layers
+	LayerBackground = new createjs.Container();
+	stage.addChild(LayerBackground);
+	LayerStage = new createjs.Container();
+	stage.addChild(LayerStage);
+	LayerForeground = new createjs.Container();
+	stage.addChild(LayerForeground);
+
+	initCatGlobals();
+
+
+>>>>>>> ad69d73a8eacf10fbb4287c98e59ab5be086dd3a
 
 	playerControls = new PlayerControls();
 
@@ -79,7 +117,7 @@ function loadingComplete() {
 	catHerd = new CatHerd(cats, player);
 
 	var treeDef = {
-		img: Resources.getItem('rubble/tree_a_big'),
+		img: Resources.getResult('rubble/tree_a_big'),
 		size: new B2Vec2(503, 539).Divide(1.2),
 		center: new B2Vec2(200, 460).Divide(1.2),
 		radius: 6
@@ -88,15 +126,6 @@ function loadingComplete() {
 	enemies.push(new Tree(treeDef, 90, 80));
 	//enemies.push(new Enemy(90, 20));
 	//enemies.push(new Enemy(100, 40));
-
-
-	createjs.Ticker.setFPS(60);
-	createjs.Ticker.addEventListener("tick", function () {
-		gamepadStrategy.update();
-		gameTick(createjs.Ticker.getInterval() / 1000);
-		rendererTick();
-		stage.update();
-	});
 }
 
 function gameTick(dt) {
