@@ -184,7 +184,7 @@ function initGame() {
 		bigW: Enemy.imgW,
 		bigH: Enemy.imgH,
 
-		maxHealth: 600
+		maxHealth: 1500
 	};
 
 	enemies.push(new Tree(treeDef, 90, 80));
