@@ -155,7 +155,10 @@ function initGame() {
 	};
 
 	enemies.push(new Tree(treeDef, 90, 80));
-	enemies.push(new Enemy(enemyDef, 90, 120));
+	enemies.push(new Enemy(enemyDef, 90, 120, [
+		new B2Vec2(90, 120).SetRange(40),
+		new B2Vec2(130, 120).SetRange(40)
+		]));
 	//enemies.push(new Enemy(100, 40));
 
 

@@ -56,3 +56,9 @@ B2Vec2.prototype.Add2 = function (x, y) {
 
 	return this;
 }
+
+
+B2Vec2.prototype.SetRange = function (r) {
+	this.range = r;
+	return this;
+}

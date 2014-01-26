@@ -24,10 +24,14 @@ function initEnemyGlobals() {
 	});
 };
 
-Enemy = function (def, x, y) {
+Enemy = function (def, x, y, instructions) {
 	var self = this;
 
 	this.def = def;
+
+	this.instructionIndex = 0;
+	this.instructions = instructions;
+	this.currentInstruction = instructions[0];
 
 	this.smallW = def.smallW;
 	this.smallH = def.smallH;

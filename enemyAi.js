@@ -48,7 +48,18 @@ var EnemyAi = {
 	},
 
 	preUpdateNormal: function (dt, enemy) {
-		enemy.forceToApply = B2Vec2.Zero;
+
+		if (enemy.position().DistanceTo(enemy.currentInstruction) < 5) {
+			enemy.instructionIndex = (enemy.instructionIndex + 1) % enemy.instructions.length;
+
+			enemy.currentInstruction = enemy.instructions[enemy.instructionIndex].Copy();
+			var range = enemy.instructions[enemy.instructionIndex].range;
+			if (range) {
+				enemy.currentInstruction.Add2((Math.random() - 0.5) * range, (Math.random() - 0.5) * range);
+			}
+		}
+
+		enemy.forceToApply = this.steeringBehaviourSeek(enemy, enemy.currentInstruction);
 	},
 
 	steeringBehaviourSeek: function (agent, dest) {
