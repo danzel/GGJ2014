@@ -327,13 +327,28 @@ function gameTick(dt) {
 
 
 		var deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#fff');
-		deadText.x = 400;
-		deadText.y = 200;
+		deadText.x = 400 + 2;
+		deadText.y = 200 + 2;
+		stage.addChild(deadText);
+
+		deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#fff');
+		deadText.x = 400 - 2;
+		deadText.y = 200 - 2;
+		stage.addChild(deadText);
+
+		deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#fff');
+		deadText.x = 400 + 2;
+		deadText.y = 200 - 2;
+		stage.addChild(deadText);
+
+		deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#fff');
+		deadText.x = 400 - 2;
+		deadText.y = 200 + 2;
 		stage.addChild(deadText);
 
 		deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#000');
-		deadText.x = 400 - 1;
-		deadText.y = 200 - 1;
+		deadText.x = 400;
+		deadText.y = 200;
 		stage.addChild(deadText);
 
 	}
