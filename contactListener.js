@@ -41,32 +41,42 @@ ContactListener.prototype = {
 			return;
 		}
 
-		//cat on cat
-		if ((contact.GetFixtureA().userData instanceof Cat) && (contact.GetFixtureB().userData instanceof Cat)) {
-			return;
-		}
-
 		var a = contact.GetFixtureA().userData;
 		var b = contact.GetFixtureB().userData;
+
+		if (!a || !b) {
+			return;
+		}
 
 		var aType = this.identify(contact.GetFixtureA());
 		var bType = this.identify(contact.GetFixtureB());
 
+		//cat on cat
+		if (aType == Cat && bType == 'cat') {
+			return;
+		}
+
 		var cat, enemy, tree;
 
 		if ((aType == 'cat' && bType == 'enemy') ||
-			(aType == 'enemy' && bType == 'cat')) {
+		(aType == 'enemy' && bType == 'cat')) {
 
 			cat = aType == 'cat' ? a : b;
 			enemy = aType == 'enemy' ? a : b;
 
-			Events.publish('collision-cat-enemy', this.getCollisionPoint(contact), cat, enemy);
+			if (!cat.isDead() && !enemy.isDead()) {
 
-			cat.takesDamage += (!enemy.dealtDamage) ? 1 : 0;
-			enemy.takesDamage += (!cat.dealtDamage) ? 1 : 0;
+				Events.publish('collision-cat-enemy', this.getCollisionPoint(contact), cat, enemy);
 
-			enemy.dealtDamage = true;
-			cat.dealtDamage = true;
+				cat.takesDamage += (!enemy.dealtDamage) ? 1 : 0;
+
+				if (cat.isBig && !cat.isDead()) {
+					enemy.takesDamage += (!cat.dealtDamage) ? 1 : 0;
+				}
+
+				enemy.dealtDamage = true;
+				cat.dealtDamage = true;
+			}
 			return;
 		}
 
@@ -75,12 +85,15 @@ ContactListener.prototype = {
 
 			enemy = aType == 'enemy' ? a : b;
 
-			Events.publish('collision-player-enemy', this.getCollisionPoint(contact), player, enemy);
+			if (!enemy.isDead()) {
 
-			player.takesDamage += (!enemy.dealtDamage) ? 1 : 0;
-			//enemy.takesDamage = true;
+				Events.publish('collision-player-enemy', this.getCollisionPoint(contact), player, enemy);
 
-			enemy.dealtDamage = true;
+				player.takesDamage += (!enemy.dealtDamage) ? 1 : 0;
+				//enemy.takesDamage = true;
+
+				enemy.dealtDamage = true;
+			}
 			return;
 		}
 
@@ -104,14 +117,15 @@ ContactListener.prototype = {
 
 			cat = aType == 'cat' ? a : b;
 
-			Events.publish('collision-cat-player', this.getCollisionPoint(contact), cat, player);
+			if (!cat.isDead()) {
+				Events.publish('collision-cat-player', this.getCollisionPoint(contact), cat, player);
 
-			if (cat.isBig) {
-				player.takesDamage++;
-			} else {
-				player.takesDamage--; //HEALZ
+				if (cat.isBig) {
+					player.takesDamage++;
+				} else {
+					player.takesDamage--; //HEALZ
+				}
 			}
-
 			return;
 		}
 

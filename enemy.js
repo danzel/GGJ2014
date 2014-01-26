@@ -1,9 +1,56 @@
-Enemy = function (def, x, y) {
+function initEnemyGlobals() {
+
+	//Events.create('cat-died');
+
+	var img = Resources.getResult('chara/doge_run');
+
+	Enemy.imgW = 1668 / 6;
+	Enemy.imgH = 230;
+
+	Enemy.runSheet = new createjs.SpriteSheet({
+		images: [img],
+		frames: {
+			width: Enemy.imgW,
+			height: Enemy.imgH,
+
+			regX: Enemy.imgW / 2,
+			regY: Enemy.imgH - 40,
+			count: 6
+		},
+
+		animations: {
+			run: [0, 5, 'run']
+		}
+	});
+};
+
+Enemy = function (def, x, y, instructions) {
 	var self = this;
 
 	this.def = def;
 
+	this.instructionIndex = 0;
+	this.instructions = instructions;
+	this.currentInstruction = instructions[0];
+
+	this.smallW = def.smallW;
+	this.smallH = def.smallH;
+
+	this.bigW = def.bigW;
+	this.bigH = def.bigH;
+
+	this.bigRadius = def.radiusBig;
+	this.smallRadius = def.radiusSmall;
+
 	this.maxHealth = def.maxHealth;
+
+
+	this.maxForce = 3000;
+	this.maxForceSquared = this.maxForce * this.maxForce;
+
+	this.maxSpeed = 100;
+	this.maxSpeedSquared = this.maxSpeed * this.maxSpeed;
+
 
 	//vars
 	this.radius = def.radiusSmall;
@@ -37,11 +84,21 @@ Enemy = function (def, x, y) {
 	this.container = new createjs.Container();
 	LayerStage.addChild(this.container);
 
-	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10);
-	this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
-	this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
-	this.container.addChild(this.shape);
+	this.sprite = new createjs.Sprite(Enemy.runSheet, 'run');
+	this.sprite.scaleX = this.smallW / Enemy.imgW;
+	this.sprite.scaleY = this.smallH / Enemy.imgH;
+	this.container.addChild(this.sprite);
+	this.sprite.framerate = 6; //TODO: Set based on speed, idle animation other wise
+
+	//this.shape = new createjs.Shape();
+	//this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10);
+	//this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
+	//this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
+	//this.container.addChild(this.shape);
+
+	this.shadow = Shadow.create(this.bigRadius * SIM_SCALE_X * 2, this.bigRadius * SIM_SCALE_Y * 2, 20);
+	this.shadow.scaleX = this.shadow.scaleY = this.radius / this.bigRadius;
+	this.container.addChildAt(this.shadow, 0);
 
 	this.healthBar = new Bar(-15, -50, 30, 6, this.maxHealth, function () {
 		var p = 1 - self.health / self.maxHealth;
@@ -80,8 +137,8 @@ Enemy = function (def, x, y) {
 				//self.lionSprite.alpha = pi;
 				//self.catSprite.alpha = p;
 
-				//self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / catImg.width;
-				//self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / catImg.height;
+				self.sprite.scaleX = (self.smallW * p + self.bigW * pi) / Enemy.imgW;
+				self.sprite.scaleY = (self.smallH * p + self.bigH * pi) / Enemy.imgH;
 
 				//self.lionSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.lionImgW;
 				//self.lionSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.lionImgH;
@@ -124,7 +181,20 @@ Enemy.prototype = {
 		this.container.x = this.position().x * SIM_SCALE_X;
 		this.container.y = this.position().y * SIM_SCALE_Y;
 
+		var sign = Math.sign(this.forceToApply.x) || Math.sign(-this.sprite.scaleX);
+
+		this.sprite.scaleX = Math.abs(this.sprite.scaleX) * -sign;
+
+		//if (this._target) {
+		//	sign = this.position().x > this._target.position().x ? -1 : 1;
+		//}
+
 		//this.shape.rotation = this.velocity().Angle();
+		if (this.velocity().LengthSquared() < 1) {
+			this.sprite.gotoAndStop(0);
+		} else if (this.sprite.paused) {
+			this.sprite.gotoAndPlay('run');
+		}
 
 		this.healthBar.update(this.health);
 		this.healthBar.shape.alpha = (this.health < this.maxHealth && this.health > 0) ? 1 : 0;

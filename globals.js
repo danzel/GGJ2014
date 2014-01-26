@@ -51,12 +51,13 @@ function init() {
 		{ id: 'chara/cat', src: 'imgs/chara/cat_run.png' },
 		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },
 		{ id: 'chara/lion_run', src: 'imgs/chara/lion_run.png' },
-		{ id: 'chara/doge_run', src: 'imgs/chara/doge_lion_run.png' },
+		{ id: 'chara/doge_run', src: 'imgs/chara/doge_run.png' },
 		{ id: 'chara/catlady', src: 'imgs/chara/main_walk.png' }
 	];
 	//Add other resources to the array here
 	resourceArray = resourceArray.concat(parallaxResources);
 	resourceArray = resourceArray.concat(particleResources);
+	resourceArray = resourceArray.concat(soundResources);
 
 	Resources.loadManifest(resourceArray);
 }
@@ -115,6 +116,7 @@ function initGame() {
 
 	initCatGlobals();
 	initPlayerGlobals();
+	initEnemyGlobals();
 
 	playerControls = new PlayerControls();
 
@@ -146,16 +148,25 @@ function initGame() {
 		densitySmall: 0.2,
 		densityBig: 0.05,
 
+		smallW: Enemy.imgW / 3,
+		smallH: Enemy.imgH / 3,
+		
+		bigW: Enemy.imgW,
+		bigH: Enemy.imgH,
+
 		maxHealth: 300
 	};
 
 	enemies.push(new Tree(treeDef, 90, 80));
-	enemies.push(new Enemy(enemyDef, 90, 120));
+	enemies.push(new Enemy(enemyDef, 90, 120, [
+		new B2Vec2(90, 120).SetRange(40),
+		new B2Vec2(130, 120).SetRange(40)
+		]));
 	//enemies.push(new Enemy(100, 40));
 
 
 	particles = new ParticleEffects();
-
+	SoundManager.init();
 }
 
 function createWalls() {
@@ -197,6 +208,22 @@ function gameTick(dt) {
 
 	player.update(dt);
 	catHerd.update(dt);
+
+	for (i = enemies.length - 1; i >= 0; i--) {
+		if (!(enemies[i] instanceof Tree)) {
+			EnemyAi.preUpdate(dt, enemies[i], enemies, player);
+		}
+	}
+	//Move agents based on forces being applied (aka physics)
+	for (i = this.enemies.length - 1; i >= 0; i--) {
+		var agent = this.enemies[i];
+
+		if (agent.forceToApply) {
+			//Apply the force
+			//console.log(i + ': ' + agent.forceToApply.x + ', ' + agent.forceToApply.y);
+			agent.body.ApplyImpulse(agent.forceToApply.Multiply(dt), agent.position());
+		}
+	}
 
 	world.Step(dt, 10, 10);
 	world.ClearForces();

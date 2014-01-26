@@ -1,4 +1,7 @@
 function initCatGlobals() {
+
+	Events.create('cat-died');
+
 	var img = Resources.getResult('chara/lion_run');
 
 	Cat.lionImgW = 1020 / 3;
@@ -90,8 +93,6 @@ Cat = function (x, y) {
 	this.fixture.userData = this;
 	this.body.SetPosition(new B2Vec2(x, y));
 
-	var catImg = Resources.getResult('chara/cat');
-
 	this.catW = Cat.catImgW / 2;
 	this.catH = Cat.catImgH / 2;
 
@@ -136,48 +137,12 @@ Cat = function (x, y) {
 	this.container.addChildAt(this.shadow, 0);
 
 	Events.subscribe('player-toggle-bigness', function (becomeBig) {
-		becomeBig = !becomeBig;
-		self.isBig = becomeBig;
-		self.transforming = true;
-		self.aiState = null;
 
-		createjs.Tween.get({ p: becomeBig ? 1 : 0, radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
-			.to(becomeBig ? { p: 0, radius: self.bigRadius, density: self.bigDensity } : { p: 1, radius: self.smallRadius, density: self.smallDensity }, 250, createjs.Ease.circIn)
-			.call(function () {
-				self.transforming = false;
-			}).addEventListener('change', function (ev) {
-				var radius = ev.target.target.radius;
-				var density = ev.target.target.density;
-				self.body.m_fixtureList.m_shape.SetRadius(radius);
-				self.body.m_fixtureList.SetDensity(density);
-				self.body.ResetMassData();
-				if (self.shape) {
-					self.shape.scaleX = radius * SIM_SCALE_X / 10;
-					self.shape.scaleY = radius * SIM_SCALE_Y / 10;
-				}
-				self.radius = radius;
-				self.minSeparation = self.radius * 4; // We'll move away from anyone nearer than this
-				self.maxCohesion = self.radius * 10; //We'll move closer to anyone within this bound
+		if (self.isDead()) {
+			return;
+		}
 
-				var p = ev.target.target.p;
-				var pi = 1 - ev.target.target.p;
-				self.lionSprite.alpha = pi;
-				self.catSprite.alpha = p;
-
-				self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.catImgW;
-				self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.catImgH;
-
-				self.lionSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.lionImgW;
-				self.lionSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.lionImgH;
-
-				if (self.shadow) {
-					self.shadow.scaleX = self.shadow.scaleY = radius / self.bigRadius;
-				}
-
-				self.healthBar.shape.y = -50 - 20 * pi;
-
-			});
-		self.isBig = becomeBig;
+		self.setBig(!becomeBig);
 	});
 
 };
@@ -195,11 +160,29 @@ Cat.prototype = {
 	},
 
 	updateDamage: function () {
+		var wasDead = this.isDead();
+
 		if (this.takesDamage) {
 			this.health -= this.takesDamage * (this.isBig ? 1 : 2);
 			this.takesDamage = 0;
 		}
-		this.dealtDamage = false;
+
+		if (this.isDead()) {
+			if (!wasDead) {
+				this.die();
+			}
+			//deadies don't deal damage
+			this.dealtDamage = true;
+		} else {
+			this.dealtDamage = false;
+		}
+	},
+	die: function () {
+		Events.publish('cat-died', this.position(), this);
+		this.catSprite.y += 10;
+		if (this.isBig) {
+			this.setBig(false);
+		}
 	},
 
 	update: function (dt) {
@@ -212,7 +195,10 @@ Cat.prototype = {
 
 		var sign = Math.sign(this.forceToApply.x) || Math.sign(this.catSprite.scaleX);
 
-		if (this.aiState && this.aiState.waiting && !this.aiState.pounced) {
+		if (this.isDead()) {
+			sign = sign || 1;
+			this.catSprite.gotoAndPlay('die');
+		} else if (this.aiState && this.aiState.waiting && !this.aiState.pounced) {
 			sign = this.position().x > this.aiState.target.position().x ? -1 : 1;
 			this.lionSprite.gotoAndStop(2);
 		} else if (this.aiState && this.aiState.pounced) {
@@ -229,5 +215,55 @@ Cat.prototype = {
 
 		this.healthBar.update(this.health);
 		this.healthBar.shape.alpha = (this.health < this.maxHealth && this.health > 0) ? 1 : 0;
+	},
+
+	setBig: function (becomeBig) {
+		var self = this;
+
+		this.transforming = true;
+		this.aiState = null;
+		self.isBig = becomeBig;
+
+		if (this._tween) {
+			createjs.Tween.removeTweens(this._tween._target);
+		}
+		this._tween = createjs.Tween.get({ p: becomeBig ? 1 : 0, radius: self.body.m_fixtureList.m_shape.GetRadius(), density: self.body.m_fixtureList.GetDensity() })
+			.to(becomeBig ? { p: 0, radius: self.bigRadius, density: self.bigDensity } : { p: 1, radius: self.smallRadius, density: self.smallDensity }, 250, createjs.Ease.circIn)
+			.call(function () {
+				self.transforming = false;
+			self._tween = null;
+		});
+		this._tween.addEventListener('change', function (ev) {
+
+			var radius = ev.target.target.radius;
+			var density = ev.target.target.density;
+			self.body.m_fixtureList.m_shape.SetRadius(radius);
+			self.body.m_fixtureList.SetDensity(density);
+			self.body.ResetMassData();
+			if (self.shape) {
+				self.shape.scaleX = radius * SIM_SCALE_X / 10;
+				self.shape.scaleY = radius * SIM_SCALE_Y / 10;
+			}
+			self.radius = radius;
+			self.minSeparation = self.radius * 4; // We'll move away from anyone nearer than this
+			self.maxCohesion = self.radius * 10; //We'll move closer to anyone within this bound
+
+			var p = ev.target.target.p;
+			var pi = 1 - ev.target.target.p;
+			self.lionSprite.alpha = pi;
+			self.catSprite.alpha = p;
+
+			self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.catImgW;
+			self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.catImgH;
+
+			self.lionSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.lionImgW;
+			self.lionSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.lionImgH;
+
+			if (self.shadow) {
+				self.shadow.scaleX = self.shadow.scaleY = radius / self.bigRadius;
+			}
+
+			self.healthBar.shape.y = -50 - 20 * pi;
+		});
 	}
 };
