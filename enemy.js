@@ -1,7 +1,39 @@
+function initEnemyGlobals() {
+
+	//Events.create('cat-died');
+
+	var img = Resources.getResult('chara/doge_run');
+
+	Enemy.imgW = 1668 / 6;
+	Enemy.imgH = 230;
+
+	Enemy.runSheet = new createjs.SpriteSheet({
+		images: [img],
+		frames: {
+			width: Enemy.imgW,
+			height: Enemy.imgH,
+
+			regX: Enemy.imgW / 2,
+			regY: Enemy.imgH - 40,
+			count: 6
+		},
+
+		animations: {
+			run: [0, 5, 'run']
+		}
+	});
+};
+
 Enemy = function (def, x, y) {
 	var self = this;
 
 	this.def = def;
+
+	this.smallW = def.smallW;
+	this.smallH = def.smallH;
+
+	this.bigW = def.bigW;
+	this.bigH = def.bigH;
 
 	this.maxHealth = def.maxHealth;
 
@@ -44,6 +76,12 @@ Enemy = function (def, x, y) {
 	//Our shape
 	this.container = new createjs.Container();
 	LayerStage.addChild(this.container);
+
+	this.sprite = new createjs.Sprite(Enemy.runSheet, 'run');
+	this.sprite.scaleX = this.smallW / Enemy.imgW;
+	this.sprite.scaleY = this.smallH / Enemy.imgH;
+	this.container.addChild(this.sprite);
+	this.sprite.framerate = 6; //TODO: Set based on speed, idle animation other wise
 
 	this.shape = new createjs.Shape();
 	this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10);
@@ -88,8 +126,8 @@ Enemy = function (def, x, y) {
 				//self.lionSprite.alpha = pi;
 				//self.catSprite.alpha = p;
 
-				//self.catSprite.scaleX = (self.catW * p + self.lionW * pi) / catImg.width;
-				//self.catSprite.scaleY = (self.catH * p + self.lionH * pi) / catImg.height;
+				self.sprite.scaleX = (self.smallW * p + self.bigW * pi) / Enemy.imgW;
+				self.sprite.scaleY = (self.smallH * p + self.bigH * pi) / Enemy.imgH;
 
 				//self.lionSprite.scaleX = (self.catW * p + self.lionW * pi) / Cat.lionImgW;
 				//self.lionSprite.scaleY = (self.catH * p + self.lionH * pi) / Cat.lionImgH;

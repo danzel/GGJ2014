@@ -51,7 +51,7 @@ function init() {
 		{ id: 'chara/cat', src: 'imgs/chara/cat_run.png' },
 		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },
 		{ id: 'chara/lion_run', src: 'imgs/chara/lion_run.png' },
-		{ id: 'chara/doge_run', src: 'imgs/chara/doge_lion_run.png' },
+		{ id: 'chara/doge_run', src: 'imgs/chara/doge_run.png' },
 		{ id: 'chara/catlady', src: 'imgs/chara/main_walk.png' }
 	];
 	//Add other resources to the array here
@@ -113,6 +113,7 @@ function initGame() {
 
 	initCatGlobals();
 	initPlayerGlobals();
+	initEnemyGlobals();
 
 	playerControls = new PlayerControls();
 
@@ -143,6 +144,12 @@ function initGame() {
 
 		densitySmall: 0.2,
 		densityBig: 0.05,
+
+		smallW: Enemy.imgW / 3,
+		smallH: Enemy.imgH / 3,
+		
+		bigW: Enemy.imgW,
+		bigH: Enemy.imgH,
 
 		maxHealth: 300
 	};
