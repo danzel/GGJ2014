@@ -6,7 +6,8 @@ var soundResources = [
 	{ id: 'meow4', src: 'sound/cclsounds/kittenmeow4.mp3' },
 	{ id: 'meow5', src: 'sound/cclsounds/kittenmeow5.mp3' },
 	{ id: 'meow6', src: 'sound/cclsounds/kittenmeow6.mp3' },
-	{ id: 'meow7', src: 'sound/cclsounds/kittenmeow7.mp3' }
+	{ id: 'meow7', src: 'sound/cclsounds/kittenmeow7.mp3' },
+	{ id: 'gg', src: 'sound/gg.mp3' }
 ];
 
 SafeSound = function (soundNames, delay) {
@@ -42,6 +43,7 @@ SoundManager = {
 			'meow6',
 			'meow7'
 		], 0);
+		this._gg = new SafeSound(['gg'], 1);
 
 		Events.create('cat-started-waiting');
 

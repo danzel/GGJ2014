@@ -188,8 +188,10 @@ function initGame() {
 	};
 
 	enemies.push(new Tree(treeDef, 90, 80));
-	enemies.push(new Tree(treeDef, 200, 80));
-	enemies.push(new Tree(treeDef, 450, 80));
+	enemies.push(new Tree(treeDef, 200, 140));
+	enemies.push(new Tree(treeDef, 300, 42));
+	enemies.push(new Tree(treeDef, 400, 140));
+	enemies.push(new Tree(treeDef, 500, 60));
 
 	enemies.push(new Enemy(enemyDef, [
 		new B2Vec2(90, 120)
@@ -325,6 +327,7 @@ function gameTick(dt) {
 		createjs.Tween.get(black)
 			.to({ alpha: 0.75 }, 5000);
 
+		SoundManager._gg.play();
 
 		var deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#fff');
 		deadText.x = 400 + 2;
