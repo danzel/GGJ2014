@@ -179,6 +179,7 @@ Cat.prototype = {
 	},
 	die: function () {
 		Events.publish('cat-died', this.position(), this);
+		this.catSprite.y += 10;
 		if (this.isBig) {
 			this.setBig(false);
 		}
