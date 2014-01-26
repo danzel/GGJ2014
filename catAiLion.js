@@ -79,6 +79,9 @@ var CatAiLion = {
 			cat.aiState.waiting = false;
 			cat.forceToApply = this.steeringBehaviourSeek(cat, tree.position());
 		} else {
+			if (!cat.aiState.waiting) {
+				Events.publish('cat-started-waiting');
+			}
 			cat.aiState.waiting = true;
 			cat.aiState.timeWaited += dt;
 			if (cat.aiState.timeWaited >= 1) {

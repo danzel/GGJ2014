@@ -57,6 +57,7 @@ function init() {
 	//Add other resources to the array here
 	resourceArray = resourceArray.concat(parallaxResources);
 	resourceArray = resourceArray.concat(particleResources);
+	resourceArray = resourceArray.concat(soundResources);
 
 	Resources.loadManifest(resourceArray);
 }
@@ -163,7 +164,7 @@ function initGame() {
 
 
 	particles = new ParticleEffects();
-
+	SoundManager.init();
 }
 
 function createWalls() {
