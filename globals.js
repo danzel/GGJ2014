@@ -241,7 +241,37 @@ function gameTick(dt) {
 	}
 
 	powerMeter.update(dt);
+
+
+	if (player.isDead() && !playerIsDead) {
+	//if (!playerIsDead) {
+		playerIsDead = true;
+
+		player.forceScale = 0;
+
+		var black = new createjs.Shape();
+		black.graphics.beginFill('#000').drawRect(0, 0, 1280, 720);
+		stage.addChild(black);
+
+		black.alpha = 0;
+		createjs.Tween.get(black)
+			.to({ alpha: 0.75 }, 5000);
+
+
+		var deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#fff');
+		deadText.x = 400;
+		deadText.y = 200;
+		stage.addChild(deadText);
+
+		deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#000');
+		deadText.x = 400 - 1;
+		deadText.y = 200 - 1;
+		stage.addChild(deadText);
+
+	}
 }
+
+var playerIsDead = false;
 
 function rendererTick(dt) {
 	var i;
