@@ -7,7 +7,22 @@ var soundResources = [
 	{ id: 'meow5', src: 'sound/cclsounds/kittenmeow5.mp3' },
 	{ id: 'meow6', src: 'sound/cclsounds/kittenmeow6.mp3' },
 	{ id: 'meow7', src: 'sound/cclsounds/kittenmeow7.mp3' },
-	{ id: 'gg', src: 'sound/gg.mp3' }
+	{ id: 'gg', src: 'sound/gg.mp3' },
+
+	{ id: 'attack1', src: 'sound/cclsounds/bigcatgrowl.mp3' },
+	{ id: 'attack2', src: 'sound/cclsounds/bigcatgrowl2.mp3' },
+	{ id: 'attack3', src: 'sound/cclsounds/bigcatgrowl3.mp3' },
+	{ id: 'attack4', src: 'sound/cclsounds/bigcatgrowl4.mp3' },
+	{ id: 'attack5', src: 'sound/cclsounds/bigcatgrowl5.mp3' },
+	{ id: 'attack6', src: 'sound/cclsounds/catgrowl1.mp3' },
+	{ id: 'attack7', src: 'sound/cclsounds/catgrowl2.mp3' },
+	{ id: 'attack8', src: 'sound/cclsounds/cathiss1.mp3' },
+	{ id: 'attack9', src: 'sound/cclsounds/cathiss2.mp3' },
+
+	{ id: 'purr1', src: 'sound/purr1.mp3' },
+	{ id: 'purr2', src: 'sound/purr2.mp3' }
+
+
 ];
 
 SafeSound = function (soundNames, delay) {
@@ -45,6 +60,24 @@ SoundManager = {
 		], 0);
 		this._gg = new SafeSound(['gg'], 1);
 
+
+		this._attack = new SafeSound([
+			'attack1',
+			'attack2',
+			'attack3',
+			'attack4',
+			'attack5',
+			'attack6',
+			'attack7',
+			'attack8',
+			'attack9'
+		], 1);
+
+		this._purr = new SafeSound([
+			'purr1',
+			'purr2'
+		], 1.3);
+
 		Events.create('cat-started-waiting');
 
 
@@ -54,6 +87,25 @@ SoundManager = {
 
 		Events.subscribe('cat-died', function () {
 			self._meow.play();
+		});
+
+		Events.subscribe('collision-cat-tree', function (a, cat) {
+			if (cat.isBig) {
+				self._attack.play();
+			}
+		});
+		Events.subscribe('collision-cat-enemy', function (a, cat) {
+			if (cat.isBig) {
+				self._attack.play();
+			}
+		});
+
+		Events.subscribe('collision-cat-player', function (a, cat) {
+			if (cat.isBig) {
+				self._attack.play();
+			} else {
+				self._purr.play();
+			}
 		});
 	}
 }
