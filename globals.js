@@ -313,7 +313,7 @@ function gameTick(dt) {
 	powerMeter.update(dt);
 
 
-	if (player.isDead() && !playerIsDead) {
+	if ((player.isDead() || enemies[enemies.length - 1].isDead()) && !playerIsDead) {
 	//if (!playerIsDead) {
 		playerIsDead = true;
 
@@ -329,32 +329,34 @@ function gameTick(dt) {
 
 		SoundManager._gg.play();
 
-		var deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#fff');
+		var text = player.isDead() ? 'YOU HAVE DIED :(' : 'THE DOGE ARE DEFEAT';
+
+		var deadText = new createjs.Text(text, '60px Arial', '#fff');
 		deadText.x = 400 + 2;
 		deadText.y = 200 + 2;
 		stage.addChild(deadText);
 
-		deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#fff');
+		deadText = new createjs.Text(text, '60px Arial', '#fff');
 		deadText.x = 400 - 2;
 		deadText.y = 200 - 2;
 		stage.addChild(deadText);
 
-		deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#fff');
+		deadText = new createjs.Text(text, '60px Arial', '#fff');
 		deadText.x = 400 + 2;
 		deadText.y = 200 - 2;
 		stage.addChild(deadText);
 
-		deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#fff');
+		deadText = new createjs.Text(text, '60px Arial', '#fff');
 		deadText.x = 400 - 2;
 		deadText.y = 200 + 2;
 		stage.addChild(deadText);
 
-		deadText = new createjs.Text('YOU HAVE DIED :(', '60px Arial', '#000');
+		deadText = new createjs.Text(text, '60px Arial', '#000');
 		deadText.x = 400;
 		deadText.y = 200;
 		stage.addChild(deadText);
-
 	}
+
 }
 
 var playerIsDead = false;
