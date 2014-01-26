@@ -125,7 +125,7 @@ var ParticleEffects = function(){
 			eventMessages: eventMessages,
 			emitters: {
 				bloodDrop: {
-					offset: {x:0,y:-20},
+					offset: {x:0,y:-10},
 					rate: new Proton.Rate(new Proton.Span(5,10), new Proton.Span(0.2, 0.5)),
 					textures: [new createjs.Bitmap(Resources.getResult('bloodDrop')),
 								/*new createjs.Bitmap(Resources.getResult('dustCloud'))*/],
@@ -133,7 +133,7 @@ var ParticleEffects = function(){
 					mass: 1,
 					lifeSpan: 2,
 					velocity: {
-						speed: new Proton.Span(1.4,1.8),
+						speed: new Proton.Span(3,4),
 						angle: new Proton.Span(-50,50),
 						type: 'polar'
 					},
@@ -141,7 +141,7 @@ var ParticleEffects = function(){
 						new Proton.Alpha(1, 0, 1),
 						new Proton.RandomDrift(5, 10, .15),
 						new Proton.Scale(new Proton.Span(.3, 1.5), 0.4),
-						new Proton.Gravity(2),
+						new Proton.Gravity(4),
 						new Proton.Rotate(new Proton.Span(0, 360), new Proton.Span([-10, -5, 5, 15, 10]), 'add')
 					]	
 				},

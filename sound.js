@@ -1,5 +1,5 @@
 var soundResources = [
-	{ id: 'alert', src: 'sound/alert.mp3' },
+	//{ id: 'alert', src: 'sound/alert.mp3' },
 	{ id: 'meow1', src: 'sound/cclsounds/kittenmeow1.mp3' },
 	{ id: 'meow2', src: 'sound/cclsounds/kittenmeow2.mp3' },
 	{ id: 'meow3', src: 'sound/cclsounds/kittenmeow3.mp3' },
@@ -48,7 +48,7 @@ SafeSound.prototype = {
 SoundManager = {
 	init: function () {
 		var self = this;
-		this._alert = new SafeSound(['alert'], 0.2);
+		//this._alert = new SafeSound(['alert'], 0.2);
 		this._meow = new SafeSound([
 			'meow1',
 			'meow2',
@@ -81,9 +81,9 @@ SoundManager = {
 		Events.create('cat-started-waiting');
 
 
-		Events.subscribe('cat-started-waiting', function () {
-			self._alert.play();
-		});
+		//Events.subscribe('cat-started-waiting', function () {
+		//	self._alert.play();
+		//});
 
 		Events.subscribe('cat-died', function () {
 			self._meow.play();

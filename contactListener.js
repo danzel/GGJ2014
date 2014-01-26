@@ -121,7 +121,7 @@ ContactListener.prototype = {
 				Events.publish('collision-cat-player', this.getCollisionPoint(contact), cat, player);
 
 				if (cat.isBig) {
-					player.takesDamage += 0.2;
+					player.takesDamage += 0.3;
 				} else {
 					player.takesDamage--; //HEALZ
 				}
