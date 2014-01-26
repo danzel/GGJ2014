@@ -5,12 +5,12 @@ var particleResources = [
 	{id: "bloodDrop", src: "imgs/Particles/bloodDrop.png"},
 	{id: "heartDrop", src: "imgs/Particles/heartDrop.png"},
 
-	{id: "comment1", src: "imgs/Particles/comment1.png"},
-	{id: "comment2", src: "imgs/Particles/comment2.png"},
-	{id: "comment3", src: "imgs/Particles/comment3.png"},
-	{id: "comment4", src: "imgs/Particles/comment4.png"},
-	{id: "comment5", src: "imgs/Particles/comment5.png"},
-	{id: "comment6", src: "imgs/Particles/comment6.png"},
+	{id: "comment1", src: "imgs/speech/muchbossfight.png"},
+	{id: "comment2", src: "imgs/speech/muchreferential.png"},
+	{id: "comment3", src: "imgs/speech/sohead.png"},
+	{id: "comment4", src: "imgs/speech/suchcrazy.png"},
+	{id: "comment5", src: "imgs/speech/verygamejam.png"},
+	{id: "comment6", src: "imgs/speech/faceinsky.png"},
 ];
 
 var ParticleEffects = function(){
@@ -96,23 +96,7 @@ var ParticleEffects = function(){
 			},
 
 			triggerEmit: function(particleEffect){
-				var callEmit = function(pos,cat,doge){
-						doge.timeSinceComment = 30;
-
-						if(!particleEffect.attachedTo.isDead() && doge.timeSinceComment > 30){
-							doge.timeSinceComment = 0;
-							particleEffect.emit({ALL: 'once'});
-						}
-
-						doge.timeSinceComment++;						
-					}
-
-				for (var i = eventMessages.length - 1; i >= 0; i--) {
-					Events.subscribe(
-						eventMessages[i],
-						callEmit
-					);
-				};
+				particleEffect.emit({comments: 'FOREVER'});
 			}
 		});
 	};
@@ -197,12 +181,10 @@ var ParticleEffects = function(){
 		});
 	}
 
-
-
 	this.effects = [];
 	this.effects.push(this.swapPoof(player,["player-toggle-bigness"]));
 	this.effects.push(this.bloodSpurt(player,["collision-player-enemy"]));
-	this.effects.push(this.bloodSpurt({position: function(){return {x:0,y:0}}},["collision-cat-enemy","collision-cat-player"]));
+	//this.effects.push(this.bloodSpurt({position: function(){return {x:0,y:0}}},["collision-cat-enemy","collision-cat-player"]));
 
 	this.EffectsUpdate = function(){
 		for(var i = cats.length - 1;i >= 0;i--){
@@ -245,7 +227,9 @@ var ParticleEffect = function(config){
 		for(key in this.emitters){
 			if('ALL' in timeToEmitFor){
 				this.emitters[key].emit(timeToEmitFor.ALL)
-			}else if(key in timeToEmitFor){
+			} else if(timeToEmitFor[key] === 'FOREVER') {
+				this.emitters[key].emit();
+			} else if(key in timeToEmitFor){
 				this.emitters[key].emit(timeToEmitFor[key]);
 			}
 		}
