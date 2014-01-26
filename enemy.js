@@ -3,9 +3,13 @@ function initEnemyGlobals() {
 	Events.create('enemy-died');
 
 	var img = Resources.getResult('chara/doge_run');
+	var img2 = Resources.getResult('chara/boss');
 
 	Enemy.imgW = 1946 / 7;
 	Enemy.imgH = 230;
+
+	Enemy.bossW = 1500 / 3;
+	Enemy.bossH = 500;
 
 	Enemy.runSheet = new createjs.SpriteSheet({
 		images: [img],
@@ -21,6 +25,24 @@ function initEnemyGlobals() {
 		animations: {
 			run: [0, 5, 'run'],
 			die: [6, 6, 'die']
+		}
+	});
+
+
+	Enemy.bossSheet = new createjs.SpriteSheet({
+		images: [img2],
+		frames: {
+			width: Enemy. bossW,
+			height: Enemy.bossH,
+
+			regX: Enemy.bossW / 2,
+			regY: Enemy.bossH - 40,
+			count: 3
+		},
+
+		animations: {
+			run: [0, 1, 'run'],
+			die: [2, 2, 'die']
 		}
 	});
 };
@@ -85,7 +107,7 @@ Enemy = function (def, x, y, instructions) {
 	this.container = new createjs.Container();
 	LayerStage.addChild(this.container);
 
-	this.sprite = new createjs.Sprite(Enemy.runSheet, 'run');
+	this.sprite = new createjs.Sprite(def.runSheet, 'run');
 	this.sprite.scaleX = this.smallW / Enemy.imgW;
 	this.sprite.scaleY = this.smallH / Enemy.imgH;
 	this.container.addChild(this.sprite);

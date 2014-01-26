@@ -9,7 +9,7 @@ Parallax = function () {
 	//Init
 	this.planes = {
 		farPlane: new Plane(LayerBackground, 0 ,"farPlane"),
-		playerPlane: new Plane(LayerBackground,30 * SIM_SCALE_Y ,"playerPlane"),
+		playerPlane: new Plane(LayerStageUnderReal, 30 * SIM_SCALE_Y, "playerPlane"),
 		nearPlane: new Plane(LayerForeground, stage.canvas.height - Resources.getResult("nearPlane").height, "nearPlane")
 	};
 
@@ -50,7 +50,7 @@ Parallax = function () {
 		LayerBackground.x = LayerBackground.x * 0.98 + bgDesired * 0.02;
 
 		var desired = -midX * SIM_SCALE_X + 1280 / 2;
-		LayerStageUnder.x = LayerStage.x = LayerStageOver.x = LayerStage.x * 0.98 + desired * 0.02;
+		LayerStageUnderReal.x = LayerStageUnder.x = LayerStage.x = LayerStageOver.x = LayerStage.x * 0.98 + desired * 0.02;
 
 		var foreDesired = -midX * fgScale * SIM_SCALE_X + 1280 / 2;
 		LayerForeground.x = LayerForeground.x * 0.98 + foreDesired * 0.02;

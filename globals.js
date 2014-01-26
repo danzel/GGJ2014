@@ -1,5 +1,6 @@
 var stage, renderer;
 
+var LayerStageUnderReal;
 var LayerStageUnder;
 var LayerBackground;
 var LayerStage;
@@ -52,6 +53,7 @@ function init() {
 		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },
 		{ id: 'chara/lion_run', src: 'imgs/chara/lion_run.png' },
 		{ id: 'chara/doge_run', src: 'imgs/chara/doge_run.png' },
+		{ id: 'chara/boss', src: 'imgs/chara/boss.png' },
 		{ id: 'chara/catlady', src: 'imgs/chara/main_walk.png' }
 	];
 	//Add other resources to the array here
@@ -96,7 +98,9 @@ function initGame() {
 	var stageContainer = new createjs.Container();
 	stage.addChild(stageContainer);
 
-	
+	LayerStageUnderReal = new createjs.Container();
+	stageContainer.addChild(LayerStageUnderReal);
+
 	LayerStage = new createjs.Container();
 	stageContainer.addChild(LayerStage);
 	LayerStageOver = new createjs.Container();
@@ -140,8 +144,7 @@ function initGame() {
 		radius: 6
 	};
 	var enemyDef = {
-		imgSmall: Resources.getResult('chara/doge_run'),
-		imgBig: Resources.getResult('chara/doge_run'),
+		runSheet: Enemy.runSheet,
 		radiusSmall: 2,
 		radiusBig: 4,
 
@@ -157,11 +160,37 @@ function initGame() {
 		maxHealth: 300
 	};
 
+
+	var bossDef = {
+		runSheet: Enemy.bossSheet,
+		radiusSmall: 4,
+		radiusBig: 6,
+
+		densitySmall: 0.2,
+		densityBig: 0.05,
+
+		smallW: Enemy.imgW / 3,
+		smallH: Enemy.imgH / 3,
+
+		bigW: Enemy.imgW,
+		bigH: Enemy.imgH,
+
+		maxHealth: 600
+	};
+
 	enemies.push(new Tree(treeDef, 90, 80));
-	enemies.push(new Enemy(enemyDef, 90, 120, [
+	//enemies.push(new Enemy(enemyDef, 90, 120, [
+	//	new B2Vec2(90, 120).SetRange(40),
+	//	new B2Vec2(130, 120).SetRange(40)
+	//]));
+
+
+	enemies.push(new Enemy(bossDef, 90, 120, [
 		new B2Vec2(90, 120).SetRange(40),
 		new B2Vec2(130, 120).SetRange(40)
-		]));
+	]));
+	enemies[enemies.length - 1].isBoss = true;
+
 	//enemies.push(new Enemy(100, 40));
 
 
