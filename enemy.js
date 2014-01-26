@@ -227,6 +227,8 @@ Enemy.prototype = {
 				if (self.shadow) {
 					self.shadow.scaleX = self.shadow.scaleY = radius / self.bigRadius;
 				}
+
+				self.healthBar.shape.y = -50 - 40 * pi;
 			});
 		self.isBig = becomeBig;
 	}
