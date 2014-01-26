@@ -33,6 +33,11 @@ Tree = function (treeDef, x, y) {
 	this.sprite.regY = treeDef.center.y / this.sprite.scaleY;
 	this.container.addChild(this.sprite);
 
+	this.shadow = Shadow.create(3 * this.radius * SIM_SCALE_X * 2, 3 * this.radius * SIM_SCALE_Y, 20);
+	this.shadow.y = 20;
+	//this.shadow.scaleX = this.shadow.scaleY = this.radius / this.bigRadius;
+	this.container.addChildAt(this.shadow, 0);
+
 	//this.shape = new createjs.Shape();
 	//this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10);
 	//this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
