@@ -89,8 +89,8 @@ var ParticleEffects = function(){
 					behaviour: [
 						new Proton.Alpha(1, 0, 1),
 						new Proton.RandomDrift(5, 0, .15),
-						//new Proton.Scale(new Proton.Span(.5, 1.5), 0.4),
-						//new Proton.Rotate(new Proton.Span(0, 360), new Proton.Span([-10, -5, 5, 15, 10]), 'add')
+						new Proton.Scale(new Proton.Span(.5, 1.5), 0.4),
+						new Proton.Rotate(new Proton.Span(0, 360), new Proton.Span([-10, -5, 5, 15, 10]), 'add')
 					]
 				}
 			},
@@ -199,8 +199,8 @@ var ParticleEffects = function(){
 			var enemy = enemies[i];
 			if(!enemy.hasParticle){
 				
-				if(enemy.isBoss){
-					this.effects.push(this.dogeComments(enemy,["collision-cat-enemy"]))
+				if(enemy.isBoss) {
+					this.effects.push(this.dogeComments(enemy, ["collision-cat-enemy"]));
 				}
 				enemy.hasParticle = true;
 			}				

@@ -222,6 +222,7 @@ function initGame() {
 
 	enemies.push(new Enemy(bossDef, [
 		new B2Vec2(560, 80)
+		//new B2Vec2(60, 80)
 	]));
 	enemies[enemies.length - 1].isBoss = true;
 	enemies[enemies.length - 1].maxForce *= 100;
@@ -232,6 +233,38 @@ function initGame() {
 
 	particles = new ParticleEffects();
 	SoundManager.init();
+
+
+	bossMessages = [
+		new createjs.Bitmap(Resources.getResult('comment1')),
+		new createjs.Bitmap(Resources.getResult('comment2')),
+		new createjs.Bitmap(Resources.getResult('comment3')),
+		new createjs.Bitmap(Resources.getResult('comment4')),
+		new createjs.Bitmap(Resources.getResult('comment5')),
+		new createjs.Bitmap(Resources.getResult('comment6'))
+	];
+	for (var i = bossMessages.length - 1; i >= 0; i--) {
+		bossMessages[i].regX = 170 / 2;
+		bossMessages[i].regY = 60 / 2;
+		LayerStageOver.addChild(bossMessages[i]);
+	}
+}
+
+var tickTimer = 0;
+function tickMessages(dt) {
+	tickTimer += dt;
+
+	if (tickTimer >= 0.4) {
+		tickTimer -= 0.4;
+	} else {
+		return;
+	}
+	var boss = enemies[enemies.length - 1];
+	for (var i = bossMessages.length - 1; i >= 0; i--) {
+		var b = bossMessages[i];
+		b.x = boss.position().x * SIM_SCALE_X + (Math.random() - 0.5) * 400;
+		b.y = boss.position().y * SIM_SCALE_Y + (Math.random() - 0.5) * 400;
+	}
 }
 
 function createWalls() {
@@ -273,6 +306,8 @@ function createWalls() {
 }
 
 function gameTick(dt) {
+
+	tickMessages(dt);
 
 	playerControls.update();
 
