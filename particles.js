@@ -3,7 +3,14 @@ var particleResources = [
 	//particle sprites
 	{id: "dustCloud", src: "imgs/Particles/dustCloud.png"},
 	{id: "bloodDrop", src: "imgs/Particles/bloodDrop.png"},
-	{id: "heartDrop", src: "imgs/Particles/heartDrop.png"}
+	{id: "heartDrop", src: "imgs/Particles/heartDrop.png"},
+
+	{id: "comment1", src: "imgs/Particles/comment1.png"},
+	{id: "comment2", src: "imgs/Particles/comment2.png"},
+	{id: "comment3", src: "imgs/Particles/comment3.png"},
+	{id: "comment4", src: "imgs/Particles/comment4.png"},
+	{id: "comment5", src: "imgs/Particles/comment5.png"},
+	{id: "comment6", src: "imgs/Particles/comment6.png"},
 ];
 
 var ParticleEffects = function(){
@@ -41,6 +48,63 @@ var ParticleEffects = function(){
 							particleEffect.emit({ALL: 'once'});
 						}
 						
+					}
+
+				for (var i = eventMessages.length - 1; i >= 0; i--) {
+					Events.subscribe(
+						eventMessages[i],
+						callEmit
+					);
+				};
+			}
+		});
+	};
+
+	this.dogeComments = function(attachTo, eventMessages){
+
+		return new ParticleEffect({
+			attachedTo: attachTo,
+			eventMessages: eventMessages,
+			emitters: {
+				comments: {
+					offset: {x:0,y:30 * SIM_SCALE_X},
+
+					rate: new Proton.Rate(1, new Proton.Span(0.2, 0.5)),
+					textures: [
+								new createjs.Bitmap(Resources.getResult('comment1')),
+								new createjs.Bitmap(Resources.getResult('comment2')),
+								new createjs.Bitmap(Resources.getResult('comment3')),
+								new createjs.Bitmap(Resources.getResult('comment4')),
+								new createjs.Bitmap(Resources.getResult('comment5')),
+								new createjs.Bitmap(Resources.getResult('comment6'))
+							],
+					position: new Proton.LineZone(-50, 0, 50, 0),
+					mass: 1,
+					lifeSpan: 0.5,
+					velocity: {
+						speed: new Proton.Span(0.7,1.2),
+						angle: new Proton.Span(-15,15),
+						type: 'polar'
+					},
+					behaviour: [
+						new Proton.Alpha(1, 0, 1),
+						new Proton.RandomDrift(5, 0, .15),
+						//new Proton.Scale(new Proton.Span(.5, 1.5), 0.4),
+						//new Proton.Rotate(new Proton.Span(0, 360), new Proton.Span([-10, -5, 5, 15, 10]), 'add')
+					]
+				}
+			},
+
+			triggerEmit: function(particleEffect){
+				var callEmit = function(pos,cat,doge){
+						doge.timeSinceComment = 30;
+
+						if(!particleEffect.attachedTo.isDead() && doge.timeSinceComment > 30){
+							doge.timeSinceComment = 0;
+							particleEffect.emit({ALL: 'once'});
+						}
+
+						doge.timeSinceComment++;						
 					}
 
 				for (var i = eventMessages.length - 1; i >= 0; i--) {
@@ -133,6 +197,8 @@ var ParticleEffects = function(){
 		});
 	}
 
+
+
 	this.effects = [];
 	this.effects.push(this.swapPoof(player,["player-toggle-bigness"]));
 	this.effects.push(this.bloodSpurt(player,["collision-player-enemy"]));
@@ -151,6 +217,9 @@ var ParticleEffects = function(){
 			var enemy = enemies[i];
 			if(!enemy.hasParticle){
 				
+				if(enemy.isBoss){
+					this.effects.push(this.dogeComments(enemy,["collision-cat-enemy"]))
+				}
 				enemy.hasParticle = true;
 			}				
 		};
