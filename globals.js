@@ -95,12 +95,14 @@ function initGame() {
 	var stageContainer = new createjs.Container();
 	stage.addChild(stageContainer);
 
-	LayerStageUnder = new createjs.Container();
-	stageContainer.addChild(LayerStageUnder);
+	
 	LayerStage = new createjs.Container();
 	stageContainer.addChild(LayerStage);
 	LayerStageOver = new createjs.Container();
 	stageContainer.addChild(LayerStageOver);
+
+	LayerStageUnder = new createjs.Container();
+	stageContainer.addChild(LayerStageUnder);
 
 	LayerForeground = new createjs.Container();
 	stage.addChild(LayerForeground);

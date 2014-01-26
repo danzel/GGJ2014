@@ -2,16 +2,17 @@
 var particleResources = [
 	//particle sprites
 	{id: "dustCloud", src: "imgs/Particles/dustCloud.png"},
-	{id: "bloodDrop", src: "imgs/Particles/bloodDrop.png"}
+	{id: "bloodDrop", src: "imgs/Particles/bloodDrop.png"},
+	{id: "heartDrop", src: "imgs/Particles/heartDrop.png"}
 ];
 
 var ParticleEffects = function(){
 
-	this.swapPoof = function(attachTo){
+	this.swapPoof = function(attachTo, eventMessages){
 
 		return new ParticleEffect({
 			attachedTo: attachTo,
-
+			eventMessages: eventMessages,
 			emitters: {
 				dustCloud: {
 					offset: {x:0,y:0},
@@ -28,69 +29,120 @@ var ParticleEffects = function(){
 					behaviour: [
 						new Proton.Alpha(1, 0, 1),
 						new Proton.RandomDrift(5, 0, .15),
-						new Proton.Scale(new Proton.Span(.3, .5), 0.4),
-						new Proton.Rotate(new Proton.Span(0, 360), new Proton.Span([-10, -5, 5, 15, 10]), 'add')
+						new Proton.Scale(new Proton.Span(.5, 1.5), 0.4),
+						//new Proton.Rotate(new Proton.Span(0, 360), new Proton.Span([-10, -5, 5, 15, 10]), 'add')
 					]
 				}
 			},
 
 			triggerEmit: function(particleEffect){
-				Events.subscribe(
-					"player-toggle-bigness",
-					function(){
-						particleEffect.emit({ALL: 'once'});
+				var callEmit = function(pos,object){
+						if(!particleEffect.attachedTo.isDead()){
+							particleEffect.emit({ALL: 'once'});
+						}
+						
 					}
-				);
+
+				for (var i = eventMessages.length - 1; i >= 0; i--) {
+					Events.subscribe(
+						eventMessages[i],
+						callEmit
+					);
+				};
 			}
 		});
 	};
 
-	this.bloodSpurt = function(attachTo){
+	this.bloodSpurt = function(attachTo, eventMessages){
+		attachTo.lastDMG = 60;
+
 		return new ParticleEffect({
 			attachedTo: attachTo,
-
+			eventMessages: eventMessages,
 			emitters: {
 				bloodDrop: {
-					offset: {x:0,y:0},
+					offset: {x:0,y:-20},
 					rate: new Proton.Rate(new Proton.Span(5,10), new Proton.Span(0.2, 0.5)),
-					textures: [new createjs.Bitmap(Resources.getResult('bloodDrop'))],
+					textures: [new createjs.Bitmap(Resources.getResult('bloodDrop')),
+								/*new createjs.Bitmap(Resources.getResult('dustCloud'))*/],
 					position: new Proton.LineZone(-25,-5,25,5),
-					mass: 20,
-					lifeSpan: 1,
+					mass: 1,
+					lifeSpan: 2,
 					velocity: {
-						speed: new Proton.Span(0.3,0.7),
+						speed: new Proton.Span(1.4,1.8),
 						angle: new Proton.Span(-50,50),
 						type: 'polar'
 					},
 					behaviour: [
 						new Proton.Alpha(1, 0, 1),
-						new Proton.RandomDrift(5, 0, .15),
-						new Proton.Scale(new Proton.Span(.3, .5), 0.4),
+						new Proton.RandomDrift(5, 10, .15),
+						new Proton.Scale(new Proton.Span(.3, 1.5), 0.4),
+						new Proton.Gravity(2),
+						new Proton.Rotate(new Proton.Span(0, 360), new Proton.Span([-10, -5, 5, 15, 10]), 'add')
+					]	
+				},
+
+				heartDrop: {
+					offset: {x:0,y:-20},
+					rate: new Proton.Rate(new Proton.Span(5,10), new Proton.Span(0.2, 0.5)),
+					textures: [new createjs.Bitmap(Resources.getResult('heartDrop')),
+								/*new createjs.Bitmap(Resources.getResult('dustCloud'))*/],
+					position: new Proton.LineZone(-25,-5,25,5),
+					mass: 1,
+					lifeSpan: 2,
+					velocity: {
+						speed: new Proton.Span(1.4,1.8),
+						angle: new Proton.Span(-50,50),
+						type: 'polar'
+					},
+					behaviour: [
+						new Proton.Alpha(1, 0, 1),
+						new Proton.RandomDrift(20, 5, .15),
+						new Proton.Scale(new Proton.Span(.3, 1.5), 0.4),
+						//new Proton.Gravity(2),
 						//new Proton.Rotate(new Proton.Span(0, 360), new Proton.Span([-10, -5, 5, 15, 10]), 'add')
 					]	
 				}
 			},
 
 			triggerEmit: function(particleEffect){
-				Events.subscribe(
-					"collision-cat-enemy",
-					function(){
-						particleEffect.emit({ALL: 'once'});
+				var callEmit = function(pos,cat,enemy){
+						if(attachTo.lastDMG > 10){
+							attachTo.lastDMG = 0;
+							particleEffect.attachedTo = {position:function(){return pos}};
+
+							if(enemy === player && !cat.isBig){
+								particleEffect.emit({heartDrop: 'once'});
+							} else {
+								particleEffect.emit({bloodDrop: 'once'});		
+							}
+						}
+
+						attachTo.lastDMG++;
 					}
-				);
+
+				for (var i = eventMessages.length - 1; i >= 0; i--) {
+					Events.subscribe(
+						eventMessages[i],
+						callEmit
+					);
+				};
+				
 			}
 
 		});
 	}
 
 	this.effects = [];
-	this.effects.push(this.swapPoof(player));
+	this.effects.push(this.swapPoof(player,["player-toggle-bigness"]));
+	this.effects.push(this.bloodSpurt(player,["collision-player-enemy"]));
+	this.effects.push(this.bloodSpurt({position: function(){return {x:0,y:0}}},["collision-cat-enemy","collision-cat-player"]));
 
 	this.EffectsUpdate = function(){
 		for(var i = cats.length - 1;i >= 0;i--){
 			var cat = cats[i];
 			if(!cat.hasParticle){
-				this.effects.push(this.swapPoof(cat));
+				this.effects.push(this.swapPoof(cat,["player-toggle-bigness"]));
 				cat.hasParticle = true;
 			}
 		}
@@ -98,7 +150,7 @@ var ParticleEffects = function(){
 		for (var i = enemies.length - 1; i >= 0; i--) {
 			var enemy = enemies[i];
 			if(!enemy.hasParticle){
-				this.effects.push(this.bloodSpurt(enemy));
+				
 				enemy.hasParticle = true;
 			}				
 		};
@@ -158,7 +210,7 @@ var ParticleEffect = function(config){
 
 	this.renderer = new Proton.Renderer('easel', this.proton, LayerStageUnder);
 	this.renderer.start();
-	config.triggerEmit(this);
+	config.triggerEmit(this,config.eventMessages);
 
 	this.update = function () {
 		if (this.proton) {

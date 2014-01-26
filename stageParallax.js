@@ -8,8 +8,8 @@ Parallax = function () {
 
 	//Init
 	this.planes = {
-		//farPlane: new Plane(LayerBackground, 0 ,"farPlane"),
-		//playerPlane: new Plane(1.0,30 ,"playerPlane"),
+		farPlane: new Plane(LayerBackground, 0 ,"farPlane"),
+		playerPlane: new Plane(LayerBackground,30 * SIM_SCALE_Y ,"playerPlane"),
 		nearPlane: new Plane(LayerForeground, stage.canvas.height - Resources.getResult("nearPlane").height, "nearPlane")
 	};
 
