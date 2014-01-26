@@ -184,7 +184,7 @@ var ParticleEffects = function(){
 	this.effects = [];
 	this.effects.push(this.swapPoof(player,["player-toggle-bigness"]));
 	this.effects.push(this.bloodSpurt(player,["collision-player-enemy"])); 
-	//this.effects.push(this.bloodSpurt({position: function(){return {x:0,y:0}}},["collision-cat-enemy","collision-cat-player"]));
+	this.effects.push(this.bloodSpurt({position: function(){return {x:0,y:0}}},["collision-cat-enemy","collision-cat-player"]));
 
 	this.EffectsUpdate = function(){
 		for(var i = cats.length - 1;i >= 0;i--){
