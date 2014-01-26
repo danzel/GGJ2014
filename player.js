@@ -101,7 +101,7 @@ Player = function () {
 
 	//Target shape
 	this.targetShape = new createjs.Shape();
-	this.targetShape.graphics.beginStroke('#f00').drawCircle(0, 0, 1);
+	this.targetShape.graphics.beginFill('#f00').drawCircle(0, 0, 3);
 	LayerStageOver.addChild(this.targetShape);
 
 	Events.subscribe('player-toggle-bigness', function (becomeBig) {
