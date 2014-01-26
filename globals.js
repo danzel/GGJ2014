@@ -61,6 +61,13 @@ function init() {
 	resourceArray = resourceArray.concat(particleResources);
 	resourceArray = resourceArray.concat(soundResources);
 
+
+	var text = new createjs.Text('Loading...', '40px Arial', '#000');
+	text.x = 10;
+	text.y = 10;
+	stage.addChild(text);
+	stage.update();
+
 	Resources.loadManifest(resourceArray);
 }
 
@@ -69,6 +76,8 @@ function loadingError(target, type, item, error) {
 }
 
 function loadingComplete() {
+	stage.removeAllChildren();
+
 
 	initMenu();
 
@@ -389,6 +398,12 @@ function gameTick(dt) {
 		deadText = new createjs.Text(text, '60px Arial', '#000');
 		deadText.x = 400;
 		deadText.y = 200;
+		stage.addChild(deadText);
+
+
+		deadText = new createjs.Text('f5 to try again!', '20px Arial', '#fff');
+		deadText.x = 600;
+		deadText.y = 400;
 		stage.addChild(deadText);
 	}
 
