@@ -1,10 +1,10 @@
 function initEnemyGlobals() {
 
-	//Events.create('cat-died');
+	Events.create('enemy-died');
 
 	var img = Resources.getResult('chara/doge_run');
 
-	Enemy.imgW = 1668 / 6;
+	Enemy.imgW = 1946 / 7;
 	Enemy.imgH = 230;
 
 	Enemy.runSheet = new createjs.SpriteSheet({
@@ -15,11 +15,12 @@ function initEnemyGlobals() {
 
 			regX: Enemy.imgW / 2,
 			regY: Enemy.imgH - 40,
-			count: 6
+			count: 7
 		},
 
 		animations: {
-			run: [0, 5, 'run']
+			run: [0, 5, 'run'],
+			die: [6, 6, 'die']
 		}
 	});
 };
@@ -110,7 +111,87 @@ Enemy = function (def, x, y, instructions) {
 
 
 	Events.subscribe('player-toggle-bigness', function (becomeBig) {
-		becomeBig = !becomeBig;
+
+		if (self.isDead()) {
+			return;
+		}
+
+		self.setBig(!becomeBig);
+	});
+
+};
+Enemy.prototype = {
+	position: function () {
+		return this.body.GetPosition();
+	},
+
+	velocity: function () {
+		return this.body.GetLinearVelocity();
+	},
+
+	isDead: function () {
+		return this.health <= 0;
+	},
+
+	updateDamage: function () {
+		var wasDead = this.isDead();
+
+		if (this.takesDamage) {
+			this.health -= this.takesDamage * (this.isBig ? 1 : 2);
+			this.takesDamage = 0;
+		}
+
+		if (this.isDead()) {
+			if (!wasDead) {
+				this.die();
+			}
+			//deadies don't deal damage
+			this.dealtDamage = true;
+		} else {
+			this.dealtDamage = false;
+		}
+	},
+	die: function () {
+		Events.publish('enemy-died', this.position(), this);
+		//this.catSprite.y += 10;
+		if (this.isBig) {
+			this.setBig(false);
+		}
+	},
+
+	update: function (dt) {
+
+	},
+
+	renderUpdate: function () {
+		this.container.x = this.position().x * SIM_SCALE_X;
+		this.container.y = this.position().y * SIM_SCALE_Y;
+
+		var sign = Math.sign(this.forceToApply.x) || Math.sign(-this.sprite.scaleX);
+
+		//if (this._target) {
+		//	sign = this.position().x > this._target.position().x ? -1 : 1;
+		//}
+
+		//this.shape.rotation = this.velocity().Angle();
+		if (this.isDead()) {
+			sign = sign || 1;
+			this.sprite.gotoAndPlay('die');
+		} else if (this.velocity().LengthSquared() < 1) {
+			this.sprite.gotoAndStop(0);
+		} else if (this.sprite.paused) {
+			this.sprite.gotoAndPlay('run');
+		}
+
+		this.sprite.scaleX = Math.abs(this.sprite.scaleX) * -sign;
+
+		this.healthBar.update(this.health);
+		this.healthBar.shape.alpha = (this.health < this.maxHealth && this.health > 0) ? 1 : 0;
+	},
+
+	setBig: function (becomeBig) {
+		var self = this;
+
 		self.isBig = becomeBig;
 		self.transforming = true;
 		self.aiState = null;
@@ -148,55 +229,5 @@ Enemy = function (def, x, y, instructions) {
 				}
 			});
 		self.isBig = becomeBig;
-	});
-
-};
-Enemy.prototype = {
-	position: function () {
-		return this.body.GetPosition();
-	},
-
-	velocity: function () {
-		return this.body.GetLinearVelocity();
-	},
-
-	isDead: function () {
-		return this.health <= 0;
-	},
-
-	updateDamage: function () {
-		//TODO
-		if (this.takesDamage) {
-			this.health -= this.takesDamage;
-			this.takesDamage = 0;
-		}
-		this.dealtDamage = false;
-	},
-
-	update: function (dt) {
-
-	},
-
-	renderUpdate: function () {
-		this.container.x = this.position().x * SIM_SCALE_X;
-		this.container.y = this.position().y * SIM_SCALE_Y;
-
-		var sign = Math.sign(this.forceToApply.x) || Math.sign(-this.sprite.scaleX);
-
-		this.sprite.scaleX = Math.abs(this.sprite.scaleX) * -sign;
-
-		//if (this._target) {
-		//	sign = this.position().x > this._target.position().x ? -1 : 1;
-		//}
-
-		//this.shape.rotation = this.velocity().Angle();
-		if (this.velocity().LengthSquared() < 1) {
-			this.sprite.gotoAndStop(0);
-		} else if (this.sprite.paused) {
-			this.sprite.gotoAndPlay('run');
-		}
-
-		this.healthBar.update(this.health);
-		this.healthBar.shape.alpha = (this.health < this.maxHealth && this.health > 0) ? 1 : 0;
 	}
 };
