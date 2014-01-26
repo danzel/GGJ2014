@@ -12,7 +12,7 @@ var CatAiKitten = {
 
 		//For visually debugging forces agent.forces = [ff.Copy(), sep.Copy(), alg.Copy(), coh.Copy()];
 
-		cat.forceToApply = seek.Add(sep.Multiply(1.2)).Add(alg.Multiply(0.3)).Add(coh.Multiply(0.05));
+		cat.forceToApply = seek.Add(sep.Multiply(2.2)).Add(alg.Multiply(0.3)).Add(coh.Multiply(0.05));
 
 		var lengthSquared = cat.forceToApply.LengthSquared();
 		if (lengthSquared > cat.maxForceSquared) {

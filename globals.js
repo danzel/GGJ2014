@@ -175,8 +175,8 @@ function initGame() {
 		radiusSmall: 4,
 		radiusBig: 6,
 
-		densitySmall: 0.2,
-		densityBig: 0.05,
+		densitySmall: 10,
+		densityBig: 2,
 
 		smallW: Enemy.imgW / 3,
 		smallH: Enemy.imgH / 3,
@@ -188,6 +188,8 @@ function initGame() {
 	};
 
 	enemies.push(new Tree(treeDef, 90, 80));
+	enemies.push(new Tree(treeDef, 200, 80));
+	enemies.push(new Tree(treeDef, 450, 80));
 
 	enemies.push(new Enemy(enemyDef, [
 		new B2Vec2(90, 120)
@@ -199,10 +201,29 @@ function initGame() {
 	]));
 
 
+	enemies.push(new Enemy(enemyDef, [
+		new B2Vec2(250, 70).SetRange(20),
+		new B2Vec2(300, 120).SetRange(20)
+	]));
+
+	enemies.push(new Enemy(enemyDef, [
+		new B2Vec2(400, 100).SetRange(60)
+	]));
+	enemies.push(new Enemy(enemyDef, [
+		new B2Vec2(410, 120).SetRange(60)
+	]));
+	enemies.push(new Enemy(enemyDef, [
+		new B2Vec2(400, 140).SetRange(60)
+	]));
+
+
+
 	enemies.push(new Enemy(bossDef, [
 		new B2Vec2(560, 80)
 	]));
 	enemies[enemies.length - 1].isBoss = true;
+	enemies[enemies.length - 1].maxForce *= 100;
+	enemies[enemies.length - 1].maxForceSquared *= 100 * 100;
 
 	//enemies.push(new Enemy(100, 40));
 
