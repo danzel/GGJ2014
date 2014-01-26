@@ -47,8 +47,11 @@ function initEnemyGlobals() {
 	});
 };
 
-Enemy = function (def, x, y, instructions) {
+Enemy = function (def, instructions) {
 	var self = this;
+
+	var x = instructions[0].x;
+	var y = instructions[0].y;
 
 	this.def = def;
 

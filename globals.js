@@ -133,6 +133,15 @@ function initGame() {
 	cats.push(new Cat(10, 55));
 	cats.push(new Cat(15, 45));
 
+	cats.push(new Cat(20+05, 45));
+	cats.push(new Cat(20+05, 50));
+	cats.push(new Cat(20+05, 55));
+	cats.push(new Cat(20+10, 45));
+	cats.push(new Cat(20+10, 50));
+	cats.push(new Cat(20+10, 55));
+	cats.push(new Cat(20+15, 45));
+
+
 	catHerd = new CatHerd(cats, player);
 
 	powerMeter = new PowerMeter();
@@ -179,15 +188,19 @@ function initGame() {
 	};
 
 	enemies.push(new Tree(treeDef, 90, 80));
-	//enemies.push(new Enemy(enemyDef, 90, 120, [
-	//	new B2Vec2(90, 120).SetRange(40),
-	//	new B2Vec2(130, 120).SetRange(40)
-	//]));
+
+	enemies.push(new Enemy(enemyDef, [
+		new B2Vec2(90, 120)
+	]));
+
+	enemies.push(new Enemy(enemyDef, [
+		new B2Vec2(150, 70).SetRange(20),
+		new B2Vec2(150, 120).SetRange(20)
+	]));
 
 
-	enemies.push(new Enemy(bossDef, 90, 120, [
-		new B2Vec2(90, 120).SetRange(40),
-		new B2Vec2(130, 120).SetRange(40)
+	enemies.push(new Enemy(bossDef, [
+		new B2Vec2(560, 80)
 	]));
 	enemies[enemies.length - 1].isBoss = true;
 
@@ -228,6 +241,11 @@ function createWalls() {
 		body.CreateFixture(fixDef);
 		body.SetPosition(new B2Vec2(100 * i, 40));
 	}
+
+	fixDef.shape = B2PolygonShape.AsBox(1, screenHeight / 2);
+	body = world.CreateBody(bodyDef);
+	body.CreateFixture(fixDef);
+	body.SetPosition(new B2Vec2(600, screenHeight / 2));
 
 }
 

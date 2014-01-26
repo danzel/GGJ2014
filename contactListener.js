@@ -59,7 +59,7 @@ ContactListener.prototype = {
 		var cat, enemy, tree;
 
 		if ((aType == 'cat' && bType == 'enemy') ||
-		(aType == 'enemy' && bType == 'cat')) {
+			(aType == 'enemy' && bType == 'cat')) {
 
 			cat = aType == 'cat' ? a : b;
 			enemy = aType == 'enemy' ? a : b;
@@ -121,7 +121,7 @@ ContactListener.prototype = {
 				Events.publish('collision-cat-player', this.getCollisionPoint(contact), cat, player);
 
 				if (cat.isBig) {
-					player.takesDamage++;
+					player.takesDamage += 0.5;
 				} else {
 					player.takesDamage--; //HEALZ
 				}
