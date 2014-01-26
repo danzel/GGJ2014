@@ -33,11 +33,11 @@ Tree = function (treeDef, x, y) {
 	this.sprite.regY = treeDef.center.y / this.sprite.scaleY;
 	this.container.addChild(this.sprite);
 
-	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10);
-	this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
-	this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
-	this.container.addChild(this.shape);
+	//this.shape = new createjs.Shape();
+	//this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10);
+	//this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
+	//this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
+	//this.container.addChild(this.shape);
 
 	LayerStage.addChild(this.container);
 };
@@ -67,6 +67,8 @@ Tree.prototype = {
 		this.container.x = this.position().x * SIM_SCALE_X;
 		this.container.y = this.position().y * SIM_SCALE_Y;
 
-		this.shape.rotation = this.velocity().Angle();
+		if (this.shape) {
+			this.shape.rotation = this.velocity().Angle();
+		}
 	}
 };

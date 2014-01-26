@@ -195,7 +195,7 @@ Cat.prototype = {
 		var sign = Math.sign(this.forceToApply.x) || Math.sign(this.catSprite.scaleX);
 
 		if (this.isDead()) {
-			sign = 1;
+			sign = sign || 1;
 			this.catSprite.gotoAndPlay('die');
 		} else if (this.aiState && this.aiState.waiting && !this.aiState.pounced) {
 			sign = this.position().x > this.aiState.target.position().x ? -1 : 1;

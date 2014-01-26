@@ -35,6 +35,9 @@ Enemy = function (def, x, y) {
 	this.bigW = def.bigW;
 	this.bigH = def.bigH;
 
+	this.bigRadius = def.radiusBig;
+	this.smallRadius = def.radiusSmall;
+
 	this.maxHealth = def.maxHealth;
 
 
@@ -83,11 +86,15 @@ Enemy = function (def, x, y) {
 	this.container.addChild(this.sprite);
 	this.sprite.framerate = 6; //TODO: Set based on speed, idle animation other wise
 
-	this.shape = new createjs.Shape();
-	this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10);
-	this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
-	this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
-	this.container.addChild(this.shape);
+	//this.shape = new createjs.Shape();
+	//this.shape.graphics.beginStroke('#44b').drawCircle(0, 0, 10);
+	//this.shape.scaleX = this.radius * SIM_SCALE_X / 10;
+	//this.shape.scaleY = this.radius * SIM_SCALE_Y / 10;
+	//this.container.addChild(this.shape);
+
+	this.shadow = Shadow.create(this.bigRadius * SIM_SCALE_X * 2, this.bigRadius * SIM_SCALE_Y * 2, 20);
+	this.shadow.scaleX = this.shadow.scaleY = this.radius / this.bigRadius;
+	this.container.addChildAt(this.shadow, 0);
 
 	this.healthBar = new Bar(-15, -50, 30, 6, this.maxHealth, function () {
 		var p = 1 - self.health / self.maxHealth;
@@ -170,7 +177,20 @@ Enemy.prototype = {
 		this.container.x = this.position().x * SIM_SCALE_X;
 		this.container.y = this.position().y * SIM_SCALE_Y;
 
+		var sign = Math.sign(this.forceToApply.x) || Math.sign(-this.sprite.scaleX);
+
+		this.sprite.scaleX = Math.abs(this.sprite.scaleX) * -sign;
+
+		//if (this._target) {
+		//	sign = this.position().x > this._target.position().x ? -1 : 1;
+		//}
+
 		//this.shape.rotation = this.velocity().Angle();
+		if (this.velocity().LengthSquared() < 1) {
+			this.sprite.gotoAndStop(0);
+		} else if (this.sprite.paused) {
+			this.sprite.gotoAndPlay('run');
+		}
 
 		this.healthBar.update(this.health);
 		this.healthBar.shape.alpha = (this.health < this.maxHealth && this.health > 0) ? 1 : 0;
