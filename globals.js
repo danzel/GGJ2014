@@ -218,20 +218,29 @@ function initGame() {
 	]));
 
 	enemies.push(new Enemy(enemyDef, [
-		new B2Vec2(400, 100).SetRange(60)
+		new B2Vec2(290, 120).SetRange(20),
+		new B2Vec2(340, 60).SetRange(20)
+	]));
+
+	enemies.push(new Enemy(enemyDef, [
+		new B2Vec2(380, 80).SetRange(30)
+	]));
+
+	//Last 3
+	enemies.push(new Enemy(enemyDef, [
+		new B2Vec2(450, 70)
 	]));
 	enemies.push(new Enemy(enemyDef, [
-		new B2Vec2(410, 120).SetRange(60)
+		new B2Vec2(450, 90)
 	]));
 	enemies.push(new Enemy(enemyDef, [
-		new B2Vec2(400, 140).SetRange(60)
+		new B2Vec2(450, 110)
 	]));
 
 
 
 	enemies.push(new Enemy(bossDef, [
-		new B2Vec2(560, 80)
-		//new B2Vec2(60, 80)
+		new B2Vec2(560, 90)
 	]));
 	enemies[enemies.length - 1].isBoss = true;
 	enemies[enemies.length - 1].maxForce *= 100;
