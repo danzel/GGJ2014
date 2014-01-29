@@ -133,14 +133,16 @@ var CatAiKitten = {
 	},
 
 	steeringBehaviourWander: function (agent, dt) {
-		if (agent._wanderTimer >= 4 || !agent._wanderPoint || B2Math.DistanceSquared(agent.position(), agent._wanderPoint) < 5 * 5) {
-			agent._wanderTimer = 0;
-			agent._wanderPoint = player.position().Copy().Add2((Math.random() - 0.5) * 50, (Math.random() - 0.5) * 50);
+		if (!agent.aiState || agent.aiState.wanderTimer >= 4 || B2Math.DistanceSquared(agent.position(), agent.aiState.wanderPoint) < 5 * 5) {
+			agent.aiState = {
+				wanderTimer: 0,
+				wanderPoint: player.position().Copy().Add2((Math.random() - 0.5) * 50, (Math.random() - 0.5) * 50)
+			};
 		}
 
-		agent._wanderTimer += dt;
+		agent.aiState.wanderTimer += dt;
 
-		return this.steeringBehaviourSeek(agent, agent._wanderPoint).Multiply(0.2);
+		return this.steeringBehaviourSeek(agent, agent.aiState.wanderPoint).Multiply(0.2);
 	},
 
 	steerTowards: function (agent, desiredDirection) {
