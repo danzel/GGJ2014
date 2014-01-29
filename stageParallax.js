@@ -50,13 +50,13 @@ Parallax = function () {
 			midX = 538;
 
 		var bgDesired = -midX * bgScale * SIM_SCALE_X + 1280 / 2;
-		LayerBackground.x = LayerBackground.x * 0.98 + bgDesired * 0.02;
+		LayerBackground.x = LayerBackground.x * 0.97 + bgDesired * 0.03;
 
 		var desired = -midX * SIM_SCALE_X + 1280 / 2;
-		LayerStageUnderReal.x = LayerStageUnder.x = LayerStage.x = LayerStageOver.x = LayerStage.x * 0.98 + desired * 0.02;
+		LayerStageUnderReal.x = LayerStageUnder.x = LayerStage.x = LayerStageOver.x = LayerStage.x * 0.97 + desired * 0.03;
 
 		var foreDesired = -midX * fgScale * SIM_SCALE_X + 1280 / 2;
-		LayerForeground.x = LayerForeground.x * 0.98 + foreDesired * 0.02;
+		LayerForeground.x = LayerForeground.x * 0.97 + foreDesired * 0.03;
 	};
 };
 
