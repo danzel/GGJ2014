@@ -42,7 +42,7 @@ Player = function () {
 	this.laserPositionOrig = B2Vec2.Zero;
 	this.laserPosition = new B2Vec2(50, 50);
 
-	this.health = this.maxHealth / 2;
+	this.health = this.maxHealth;
 	this.takesDamage = 0;
 
 	//Create a physics body
