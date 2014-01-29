@@ -65,7 +65,7 @@ Cat = function (x, y) {
 	this.minSeparation = this.smallRadius * 8; // We'll move away from anyone nearer than this
 	this.maxCohesion = this.smallRadius * 15; //We'll move closer to anyone within this bound
 
-	this.maxHealth = 220;
+	this.maxHealth = 240;
 
 	//vars
 	this.radius = this.smallRadius;
