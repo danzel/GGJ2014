@@ -87,7 +87,7 @@ var CatAiLion = {
 			if (cat.aiState.timeWaited >= 1) {
 				cat.forceToApply = tree.position().Copy().Subtract(cat.position());
 				cat.forceToApply.Normalize();
-				cat.forceToApply.Multiply(cat.maxForce * 5);
+				cat.forceToApply.Multiply(cat.maxForce * 2);
 				//cat.forceToApply = this.steeringBehaviourSeek(cat, tree.position(), 0, dt).Multiply(cat.maxForce * 10);
 
 				cat.aiState.pounced = true;
