@@ -282,6 +282,9 @@ function tickMessages(dt) {
 		var b = bossMessages[i];
 		b.x = boss.position().x * SIM_SCALE_X + (Math.random() - 0.5) * 400;
 		b.y = boss.position().y * SIM_SCALE_Y + (Math.random() - 0.5) * 400;
+		if (boss.isBig) {
+			b.y -= 200;
+		}
 	}
 }
 
