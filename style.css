@@ -3,6 +3,7 @@
 	padding: 0;
 
 	cursor: crosshair;
+	overflow: hidden;
 }
 
 canvas {
