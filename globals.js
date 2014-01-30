@@ -78,6 +78,9 @@ function loadingError(target, type, item, error) {
 function loadingComplete() {
 	stage.removeAllChildren();
 
+	initCatGlobals();
+	initPlayerGlobals();
+	initEnemyGlobals();
 
 	initMenu();
 
@@ -125,11 +128,6 @@ function initGame() {
 	stage.addChild(LayerStaticOverlay);
 
 	parallaxScroll = new Parallax();
-
-
-	initCatGlobals();
-	initPlayerGlobals();
-	initEnemyGlobals();
 
 	playerControls = new PlayerControls();
 
