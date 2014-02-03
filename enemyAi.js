@@ -79,13 +79,13 @@ var EnemyAi = {
 	},
 
 	steeringBehaviourWander: function (agent, dt) {
-		if (agent._wanderTimer >= 4 || !agent._wanderPoint || B2Math.DistanceSquared(agent.position(), agent._wanderPoint) < 5 * 5) {
-			agent._wanderTimer = 0;
-			agent._wanderPoint = player.position().Copy().Add2((Math.random() - 0.5) * 50, (Math.random() - 0.5) * 50);
+		if (agent.wanderTimer >= 4 || !agent.wanderPoint || B2Math.DistanceSquared(agent.position(), agent.wanderPoint) < 5 * 5) {
+			agent.wanderTimer = 0;
+			agent.wanderPoint = player.position().Copy().Add2((Math.random() - 0.5) * 50, (Math.random() - 0.5) * 50);
 		}
 
-		agent._wanderTimer += dt;
+		agent.wanderTimer += dt;
 
-		return this.steeringBehaviourSeek(agent, agent._wanderPoint).Multiply(0.2);
+		return this.steeringBehaviourSeek(agent, agent.wanderPoint).Multiply(0.2);
 	}
 }; 

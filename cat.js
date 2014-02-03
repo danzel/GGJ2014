@@ -118,6 +118,12 @@ Cat = function (x, y) {
 	this.lionSprite.alpha = 0;
 	this.container.addChild(this.lionSprite);
 
+	var confusedImg = Resources.getResult('confused');
+	this.confusedSprite = new createjs.Bitmap(confusedImg);
+	this.confusedSprite.regX = confusedImg.width / 2;
+	this.confusedSprite.regY = 75;
+	this.container.addChild(this.confusedSprite);
+
 	this.healthBar = new Bar(-15, -50, 30, 6, this.maxHealth, function () {
 		var p = 1 - self.health / self.maxHealth;
 		//green - red
@@ -208,6 +214,15 @@ Cat.prototype = {
 		} else if (this.lionSprite.paused) {
 			this.lionSprite.gotoAndPlay('run');
 		}
+
+		var showConfused = false;
+		if (!this.isDead()) {
+			if (this.aiState && this.aiState.wanderTimer) {
+				showConfused = true;
+			}
+		}
+
+		this.confusedSprite.alpha = showConfused ? 1 : 0;
 
 		this.catSprite.scaleX = Math.abs(this.catSprite.scaleX) * sign;
 		this.lionSprite.scaleX = Math.abs(this.lionSprite.scaleX) * sign;

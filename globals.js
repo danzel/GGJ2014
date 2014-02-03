@@ -48,6 +48,7 @@ function init() {
 	Resources.on('error', loadingError);
 
 	var resourceArray = [
+		{ id: 'confused', src: 'imgs/confused.png' },
 		{ id: 'rubble/tree_a_big', src: 'imgs/rubble/tree_a_big.png' },
 		{ id: 'chara/cat', src: 'imgs/chara/cat_run.png' },
 		{ id: 'chara/lion', src: 'imgs/chara/mocks_lion.png' },

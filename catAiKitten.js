@@ -23,6 +23,7 @@ var CatAiKitten = {
 	steeringBehaviourSeekMaybe: function (agent, dest, dt) {
 
 		if (B2Math.DistanceSquared(agent.position(), dest) < 40 * 40) {
+			agent.aiState = null;
 			return this.steeringBehaviourSeek(agent, dest);
 		} else {
 			return this.steeringBehaviourWander(agent, dt);

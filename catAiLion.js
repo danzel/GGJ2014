@@ -199,14 +199,14 @@ var CatAiLion = {
 	},
 
 	steeringBehaviourWander: function (agent, target, diameter, dt) {
-		if (agent.aiState._wanderTimer >= 4 || !agent.aiState._wanderPoint || B2Math.DistanceSquared(agent.position(), agent.aiState._wanderPoint) < 5 * 5) {
-			agent.aiState._wanderTimer = 0;
-			agent.aiState._wanderPoint = target.Copy().Add2((Math.random() - 0.5) * diameter, (Math.random() - 0.5) * diameter);
+		if (agent.aiState.wanderTimer >= 4 || !agent.aiState.wanderPoint || B2Math.DistanceSquared(agent.position(), agent.aiState.wanderPoint) < 5 * 5) {
+			agent.aiState.wanderTimer = 0;
+			agent.aiState.wanderPoint = target.Copy().Add2((Math.random() - 0.5) * diameter, (Math.random() - 0.5) * diameter);
 		}
 
-		agent._wanderTimer += dt;
+		agent.wanderTimer += dt;
 
-		return this.steeringBehaviourSeek(agent, agent.aiState._wanderPoint).Multiply(0.2);
+		return this.steeringBehaviourSeek(agent, agent.aiState.wanderPoint).Multiply(0.2);
 	},
 
 	steerTowards: function (agent, desiredDirection) {
