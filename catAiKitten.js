@@ -137,7 +137,7 @@ var CatAiKitten = {
 		if (!agent.aiState || agent.aiState.wanderTimer >= 4 || B2Math.DistanceSquared(agent.position(), agent.aiState.wanderPoint) < 5 * 5) {
 			agent.aiState = {
 				wanderTimer: 0,
-				wanderPoint: player.position().Copy().Add2((Math.random() - 0.5) * 50, (Math.random() - 0.5) * 50)
+				wanderPoint: player.position().Copy().Add2((Math.random() - 0.5) * 120, (Math.random() - 0.5) * 120)
 			};
 		}
 
